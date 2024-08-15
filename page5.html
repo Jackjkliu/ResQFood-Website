@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResQFood Pantry Finder</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    
+    :root {
+      --primary-color: #FF6F61;
+      --secondary-color: #2C3E50;
+      --background-color: #F8F9FA;
+      --text-color: #333333;
+      --card-bg-color: #FFFFFF;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .title {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-align: center;
+      color: var(--secondary-color);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      animation: fadeInDown 1s ease-out;
+    }
+    
+    .menu-icon {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 1000;
+      background-color: var(--primary-color);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 6px var(--shadow-color);
+      transition: all 0.3s ease;
+    }
+    
+    .menu-icon:hover {
+      transform: scale(1.1);
+    }
+    
+    .menu {
+      display: none;
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background-color: var(--card-bg-color);
+      border-radius: 10px;
+      padding: 15px;
+      z-index: 1000;
+      box-shadow: 0 10px 20px var(--shadow-color);
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 12px 20px;
+      margin-bottom: 10px;
+      background-color: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .button:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    
+    .result-button {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      margin: 15px 0;
+      background-color: var(--card-bg-color);
+      color: var(--text-color);
+      text-align: left;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px var(--shadow-color);
+      overflow: hidden;
+    }
+    
+    .result-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px var(--shadow-color);
+    }
+    
+    .result-button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background-color: var(--primary-color);
+      transition: all 0.3s ease;
+    }
+    
+    .result-button:hover::after {
+      width: 10px;
+    }
+    
+    .distance, .duration {
+      position: absolute;
+      right: 20px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    .distance {
+      bottom: 20px;
+    }
+    
+    .duration {
+      top: 20px;
+    }
+    
+    #map {
+      height: 400px;
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px var(--shadow-color);
+      display: none;
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+    }
+    
+    .loading::after {
+      content: '';
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <div class="menu">
+      <a href="page5.html" class="button">List View</a>
+      <a href="page4.html" class="button">Map View</a>
+    </div>
+    <h1 class="title">Nearest Food Pantries</h1>
+    <div id="result" class="loading"></div>
+  </div>
+  <div id="map"></div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', getDistances);
+  var apiKey = "b98e9dd2f9414231bae19340b76feff0";
+
+  function toggleMenu() {
+    var menu = document.querySelector('.menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+
+
+    document.addEventListener('DOMContentLoaded', getDistances);
+    var apiKey = "b98e9dd2f9414231bae19340b76feff0";
+  
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    }
+  
+    function switchView(view) {
+      if (view === 'list') {
+        window.location.href = 'page5.html';
+      } else if (view === 'map') {
+        window.location.href = 'page4.html';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', getDistances);
+    var apiKey = "b98e9dd2f9414231bae19340b76feff0";
+    
+    const foodPantries = [
+    {
+        name: "The Apostles House",
+        address: "18-24 Grant Street",
+        location: "Newark",
+        latitude: 40.74828871951649,
+        longitude: -74.16966621916775,
+    },
+    {
+        name: "Bethany Baptist Church Pantry",
+        address: "275 W. Market St / 58 Hartford St",
+        location: "Newark",
+        latitude: 40.74443088318194,
+        longitude: -74.18772220818111,
+    },
+    {
+        name: "Little Zion U.A.M.E Church",
+        address: "154 Stephens St,",
+        location: "Belleville",
+        latitude: 40.789597529857986,
+        longitude: -74.14856260811335,
+    },
+    {
+        name: "Love Of Jesus Family Church Of Belleville",
+        address: "4 N. Hawthorne Lane",
+        location: "Newark - BELLEVILLE, NJ",
+        latitude: 40.783307903536986,
+        longitude: -74.17540032101145,
+    },
+  {
+        name: "Peaceful Zion Baptist Church",
+        address: "213 Rhode Island Ave",
+        location: "East Orange",
+        latitude: 40.754351533093875, 
+        longitude: -74.22336937049899,
+    },
+    {
+        name: "Isaiah House",
+        address: "238 North Munn Ave",
+        location: "East Orange",
+        latitude: 40.76648508392171,
+        longitude: -74.20536607683674,
+    },
+    {
+        name: "New Hope Baptist Church Pantry",
+        address: "144 Norman St",
+        location: "East Orange",
+        latitude: 40.779609982425725,
+        longitude: -74.20497510382454,
+    },
+    {
+        name: "Inner City Emerg (Joi's Angels)",
+        address: "114 S. Arlington Avenue",
+        location: "East Orange",
+        latitude: 40.7573509556083,
+        longitude: -74.21329794800226,
+    },
+    {
+        name: "Imani Baptist Church",
+        address: "113-117 Elmwood Ave",
+        location: "East Orange",
+        latitude: 40.753159547102335,
+        longitude: -74.21878173450814,
+    },
+    {
+        name: "Calvary Baptist Church",
+        address: "66 So. Grove Street",
+        location: "East Orange",
+        latitude: 40.75496841525514,
+        longitude: -74.20403304984889,
+    },
+       {
+        name: "New Light Baptist Church Food Pantry",
+        address: "89-91 Dewey Street",
+        location: "Bloomfield, NJ",
+        latitude: 40.8215562642556,
+        longitude: -74.1808459288352,
+    },
+    {
+        name: "East Orange Comm. Dev. Corp",
+        address: "490 Main St",
+        location: "East Orange, NJ",
+        latitude: 40.886110605334785,
+        longitude: -74.24483261915721,
+    },
+    {
+        name: "Salvation Army-East Orange",
+        address: "430 Main St",
+        location: "East Orange, NJ",
+        latitude: 40.88672317053373,
+        longitude: -74.24219943449795,
+    },
+    {
+        name: "Peaceful Zion Baptist Church",
+        address: "213 Rhode Island Ave",
+        location: "East Orange, NJ",
+        latitude: 40.75776388155932,
+        longitude: -74.20851993450785,
+    },
+    {
+        name: "Isaiah House",
+        address: "238 North Munn Ave",
+        location: "East Orange, NJ",
+        latitude: 40.72128716021824,
+        longitude: -74.22428204800502,
+    },
+    {
+        name: "New Hope Baptist Church Pantry",
+        address: "144 Norman St",
+        location: "East Orange, NJ",
+        latitude: 40.72295661796696,
+        longitude: -74.21820472101606,
+    },
+    {
+        name: "Inner City Emerg (Joi's Angels)",
+        address: "114 S. Arlington Avenue",
+        location: "East Orange, NJ",
+        latitude: 40.729076639280954,
+        longitude: -74.22341416334528,
+    },
+    {
+        name: "Imani Baptist Church",
+        address: "113-117 Elmwood Ave",
+        location: "East Orange, NJ",
+        latitude: 40.72863212556445,
+        longitude: -74.2333939711648,
+    },
+    {
+        name: "Calvary Baptist Church",
+        address: "66 So. Grove Street",
+        location: "East Orange, NJ",
+        latitude: 40.714142421903,
+        longitude: -74.23454870567598,
+    },
+    {
+        name: "Salem Seventh-Day Adventist",
+        address: "10 S. Oraton Parkway",
+        location: "East Orange, NJ",
+        latitude: 40.720988172895666,
+        longitude: -74.23388142286264,
+    },
+    {
+        name: "Bethlehem French SDA Church",
+        address: "30 N. Clinton St.",
+        location: "East Orange, NJ",
+        latitude: 40.76506043864116,
+        longitude: -74.2135582633425,
+    },
+    {
+        name: "New Reid Temple Church of God in Christ",
+        address: "154 N. Oraton Parkway",
+        location: "East Orange, NJ",
+        latitude: 40.763314242484476,
+        longitude: -74.20558847868335,
+    },
+    {
+        name: "Church Women United Pantry",
+        address: "1240 Clinton Ave",
+        location: "Irvington, NJ",
+        latitude: 40.72128716021824,
+        longitude: -74.22428204800502,
+    },
+    {
+        name: "Solid Rock Baptist Church",
+        address: "644 Chancellor Avenue",
+        location: "Irvington, NJ",
+        latitude: 40.72295661796696,
+        longitude: -74.21820472101606,
+    },
+    {
+        name: "Bethel French SDA Church",
+        address: "188 Union Avenue",
+        location: "Irvington, NJ",
+        latitude: 40.729076639280954,
+        longitude: -74.22341416334528,
+    },
+    {
+        name: "Christ Glory Food Pantry",
+        address: "1108 Grove Street",
+        location: "Irvington, NJ",
+        latitude: 40.72863212556445,
+        longitude: -74.2333939711648,
+    },
+    {
+        name: "Deeper Life Bible Church",
+        address: "23 S. 20th Street",
+        location: "Irvington, NJ",
+        latitude: 40.714142421903,
+        longitude: -74.23454870567598,
+    },
+         {
+        name: "Human Needs Food Pantry",
+        address: "9 Label Street",
+        location: "Montclair, NJ",
+        latitude: 40.81818616324979,
+        longitude: -74.21153640566801,
+    },
+    {
+        name: "Salvation Army - Montclair",
+        address: "123 Elm Street",
+        location: "Montclair, NJ",
+        latitude: 40.81433218969013,
+        longitude: -74.22173612100912,
+    },
+    {
+        name: " Grace Pointe 7th Day Adventist Church",
+        address: "15 Elmwood Ave",
+        location: "Montclair, NJ",
+        latitude: 40.80848141927362,
+        longitude: -74.2132725482195,
+    },
+    {
+        name: "Toni's Kitchen @ St. Luke's Church",
+        address: "789 Maple Street",
+        location: "Montclair, NJ",
+        latitude: 40.81002444197794,
+        longitude: -74.21794030566859,
+    },
+    {
+        name: "Salvation Army - NWK West",
+        address: "10 Main Street",
+        location: "Newark, NJ",
+        latitude: 40.72932964759058,
+        longitude: -74.21392846149878,
+    },
+    {
+        name: "First Hopewell Baptist Church",
+        address: "11 Oak Street",
+        location: "Newark, NJ",
+        latitude: 40.75491729773876,
+        longitude: -74.19242427683764,
+    },
+    {
+        name: "St. James Social Service Corp.",
+        address: "12 Pine Avenue",
+        location: "Newark, NJ",
+        latitude: 40.732408130325275,
+        longitude: -74.181082707521,
+    },
+    {
+        name: "Franciscan Charities-St.Ann's",
+        address: "13 Walnut Street",
+        location: "Newark, NJ",
+        latitude: 40.73757239912521,
+        longitude: -74.19251369033337,
+    },
+    {
+        name: "Blessed Sacrament Pathway",
+        address: "14 Chestnut Avenue",
+        location: "Newark, NJ",
+        latitude: 40.722172289052494,
+        longitude: -74.20619784615855,
+    },
+    {
+        name: "MEND",
+        address: "15 Mulberry Lane",
+        location: "Newark, NJ",
+        latitude: 40.72023682029925,
+        longitude: -74.18556654985147,
+    },
+    {
+        name: "Zion United Church of Christ",
+        address: "16 Oak Street",
+        location: "Newark, NJ",
+        latitude: 40.7569782912169,
+        longitude: -74.15817897868388,
+    },
+    {
+        name: "MT. Zion Baptist Church",
+        address: "17 Pine Avenue",
+        location: "Newark, NJ",
+        latitude: 40.758090007622606,
+        longitude: -74.17021932101343,
+    },
+    {
+        name: "Emerg. Food and Nutrition NTWK",
+        address: "18 Walnut Street",
+        location: "Newark, NJ",
+        latitude: 40.73398406655154,
+        longitude: -74.17801369033367,
+    },
+    {
+        name: "The Apostles House",
+        address: "19 Maple Street",
+        location: "Newark, NJ",
+        latitude: 40.74828871951649,
+        longitude: -74.16966621916775,
+    },
+    {
+        name: "House of Mercy Missions",
+        address: "20 Elm Street",
+        location: "Newark, NJ",
+        latitude: 40.73081565778868,
+        longitude: -74.2068437486113,
+    },
+    {
+        name: "New Communities Corp. Senior",
+        address: "21 Oak Avenue",
+        location: "Newark, NJ",
+        latitude: 40.736334742893014,
+        longitude: -74.1910101345094,
+    },
+        { 
+        latitude: 40.735330008121956,  
+        longitude: -74.18000549281531, 
+        name: "TOUSSAINT FOOD PANTRY",
+        location: "Newark",
+        address: "528 Martin Luther King Blvd"
+    },
+    { 
+       latitude: 40.73297040004622, 
+        longitude: -74.18935180567456, 
+        name : "EMMANUEL CHURCH OF CHRIST",
+        location: "Newark",
+        address: "54 Irvine Turner Blvd"
+    },
+    { 
+        latitude: 40.729757086034176,  
+        longitude: -74.17472881916925, 
+        name: "Newark Emergency Services",
+       location: "Newark",
+        address: "982 Broad St"
+    },
+    { 
+        latitude : 40.75208327434918,  
+        longitude: -74.19295013450828, 
+        name: "ROSEVILLE PRESBYTERIAN CHURCH",
+        location: "Newark",
+        address: "36 Roseville Ave"
+    },
+    { 
+        latitude: 40.707530032194484,  
+        longitude: -74.21792759218208, 
+        name: "Mt. Vernon Baptist Church",
+        location: "Newark",
+        address: "709 Clinton Avenue"
+    },
+    { 
+        latitude: 40.707530032194484, 
+        longitude: -74.21792759218208, 
+        name: "Emanuel Baptist Church",
+       location: "Newark",
+        address: "228 Chancellor Ave"
+    },
+    { 
+        latitude: 40.7060255977914, 
+        longitude: -74.20589499999998, 
+        name: "CALVARY GOSPEL CHURCH",
+        location: "Newark",
+        address: "17 Lyons Avenue"
+    },
+    { 
+        latitude: 40.710735990749036,
+        longitude: -74.2154965191706, 
+        name: "VICTORY AT SUNRISE BAPTIST CHURCH",
+        location: "Newark",
+        address: "376 Clinton Pl"
+    },
+    { 
+        latitude: 40.70537426993038, 
+        longitude: -74.2178213228638, 
+        name: "FRANKLIN - ST. JOHN'S COMMUNITY",
+        location: "Newark",
+        address: "142 Maple Ave"
+    },
+    { 
+        latitude: 40.710555054324935, 
+        longitude: -74.22300393820427, 
+        name: "CLEARVIEW BAPTIST CHURCH",
+        location: "Newark",
+        address: "357 Chancellor Ave"
+    },
+    { 
+        latitude: 40.75375074558457, 
+        longitude: -74.17687472613992, 
+        name: "UNITED NEIGHBORS DEVE. CORP",
+        location: "Newark",
+        address: "487 Orange Street"
+    },
+    { 
+        latitude: 40.73672478928626, 
+        longitude: -74.19391394985018, 
+        name: "NEW BORN HOLY CHURCH",
+        location: "Newark",
+        address: "250 Bergen Street"
+    },
+    { 
+        latitude: 40.72342238553982, 
+       longitude: -74.18672605169763, 
+        name: "GREATER MT. MORIAH HOME FOREIG",
+        location: "Newark",
+        address: "210 Clinton Avenue"
+    },
+    { 
+        latitude: 40.76192200376331, 
+        longitude: -74.17101648319617, 
+        name: "NEWARK SPANISH 7TH DAY ADVENTIST",
+        location: "Newark",
+        address: "58 2nd Avenue"
+    },
+    { 
+        latitude: 40.71771248404836, 
+        longitude: -74.1993727210165, 
+        name: "NEW DAWN MISS. BAPT. CHURCH",
+        location: "Newark",
+        address: "284 Peshine Avenue"
+    },
+        { 
+        name: "FIRST CORINTHIAN BAPT. CHURCH",
+        address: "595 South 10th Street",
+        location: "Newark, NJ",
+        latitude: 40.73217886107068,
+        longitude: -74.20382649218018
+    },
+    { 
+        name: "CHURCH OF THE ETERNAL GOD",
+        address: "190 Highland Avenue",
+        location: "Newark, NJ",
+        latitude: 40.76293368430769,
+        longitude: -74.1770365631712
+    },
+    { 
+        name: "TRINITY U.A.M.E.",
+        address: "226 Warren Street",
+        location: "Newark, NJ",
+        latitude: 40.74501255328225,
+        longitude: -74.15849171916803
+    },
+    { 
+        name: "WILLING HEART CTR-METROPOLITAN",
+        address: "555 Dr. MLK Blvd",
+        location: "Newark, NJ",
+        latitude: 40.73449040017754,
+        longitude: -74.18081994800403
+    },
+    { 
+        name: "ST. PAUL TABERNACLE",
+        address: "530-532 Clinton Avenue",
+        location: "Newark, NJ",
+        latitude: 40.72186208368334,
+        longitude: -74.2024785056754
+    },
+    { 
+        name: "CANAAN BAPTIST CHURCH",
+        address: "131 Pomona Avenue",
+        location: "Newark, NJ",
+        latitude: 40.7080453299288,
+        longitude: -74.2124986056765
+    },
+    { 
+        name: "MARANATHA SDA CHURCH",
+        address: "890 South Orange Ave",
+        location: "Newark, NJ",
+        latitude: 40.74914831119323,
+        longitude: -74.22483870753993
+    },
+    { 
+        name: "IGREJA EVANGELICA VIDA NOVA",
+        address: "150 Broadway",
+        location: "Newark, NJ",
+        latitude: 40.755196774689864,
+        longitude: -74.17046639555961
+    },
+    { 
+        name: "CALVARY TOUCH OF GOD CHURCH",
+        address: "636-638 Bergen Street",
+        location: "Newark, NJ",
+        latitude: 40.72245472590239,
+        longitude: -74.19948293820337
+    },
+    { 
+        name: "ST. JOHN BAPTIST CHURCH",
+        address: "137 Fairmont Avenue",
+        location: "Newark, NJ",
+        latitude: 40.74271516597509,
+        longitude: -74.19369868465921
+    },
+    { 
+        name: "HOUSE OF LOVE SOUP KITCHEN",
+        address: "589-595 Central Ave",
+        location: "Newark, NJ",
+        latitude: 40.75027463231869,
+        longitude: -74.19906336149721
+    },
+    { 
+        name: "DELIVERANCE HOLISTIC CARE PROG",
+        address: "488 South Orange Ave",
+        location: "Newark, NJ",
+        latitude: 40.74276398770436,
+        longitude: -74.20682200567383
+    },
+    { 
+        name: "HOMBRES Y MUJERES DE VALOR PAR",
+        address: "347 6th Avenue",
+        location: "Newark, NJ",
+        latitude: 40.75868811894711,
+        longitude: -74.19337197683738
+    },
+    { 
+        name: "JOBETH, INC.",
+        address: "203 Johnson Avenue",
+        location: "Newark, NJ",
+        latitude:  40.71515321099625,
+        longitude: -74.1939285153408
+    },
+    { 
+        name: "UNITED COMMUNITY CORPORATION",
+        address: "933 South 17th Street",
+        location: "Newark, NJ",
+        latitude:  40.723659098700296,
+        longitude: -74.21430300567522
+    },
+    { 
+        name: "EBEN-EZER FOOD PANTRY",
+        address: "1152 S. Orange Ave.",
+        location: "Newark, NJ",
+        latitude: 40.745389011715986,
+        longitude: -74.23708152101437
+    },
+    { 
+        name: "ALLEN VILLAGE CDC",
+        address: "56 19th Avenue",
+        location: "Newark, NJ",
+        latitude: 40.73182413161018,
+        longitude: -74.21107256334501
+    },
+    {
+        name: "THE KINGDOM EXPERIENCE CHURCH",
+        address: "667 So, 11th Street",
+        location: "Newark",
+        latitude: 40.73027950582577,
+        longitude: -74.20565086149875,
+    },
+    {
+        name: "NEWARK BIBLE FELLOWSHIP",
+        address: "30 Randolph Place",
+        location: "Newark",
+        latitude: 40.72218428322437,
+        longitude: -74.2117687423296,
+    },
+    {
+        name: "1st Missionary Church Proclaimers of Righteousness",
+        address: "59 SPRINGDALE AVENUE",
+        location: "Newark",
+        latitude: 40.75774002738023,
+        longitude: -74.18037662883519,
+    },
+    {
+        name: "BEULAH GROVE CHURCH",
+        address: "",
+        location: "",
+        latitude: 40.7649522908418,
+        longitude: -74.18993983266093,
+    },
+    {
+        name: "BROADWAY HOUSE FOR CONTINUING",
+        address: "298 Broadway",
+        location: "Newark",
+        latitude: 40.76062838335546,
+        longitude: -74.16881301916678,
+    },
+    {
+        name: "COVENANT HOUSE - NJ",
+        address: "330 Washington St",
+        location: "Newark",
+        latitude: 40.733440371899455,
+        longitude: -74.1760653865056,
+    },
+    {
+        name: "CIRCLE OF LIFE",
+        address: "55 Reeves Pl",
+        location: "Newark",
+        latitude: 40.71891569820289,
+        longitude: -74.20890123451082,
+    },
+    {
+        name: "FRANCISCAN CHARITIES",
+        address: "212 Hunterdon Street",
+        location: "Newark",
+        latitude: 40.73753988188041,
+        longitude: -74.19253514800377,
+    },
+    {
+        name: "COMMUNITY CHURCH OF FAITH",
+        address: "26 Irvine Turner Blvd",
+        location: "Newark",
+        latitude: 40.73402271528373,
+        longitude: -74.18879254800409,
+    },
+    {
+        name: "UNION CHAPEL COMMUNITY DEVELOP",
+        address: "209 Wainwright St",
+        location: "Newark",
+        latitude: 40.71386501571222,
+        longitude: -74.22181471732401,
+    },
+    {
+        name: "GREATER ABYSSINIAN BAPTIST CHURCH",
+        address: "88 Lyons Ave",
+        location: "Newark",
+        latitude: 40.7076081609426,
+        longitude: -74.2094452921821,
+    },
+    {
+        name: "ST. ANDREWS EPISCOPAL CHURCH",
+        address: "933 S. 17th Street",
+        location: "Newark",
+        latitude: 40.723659098700296,
+        longitude: -74.21429227684003,
+    },
+    {
+        name: "WILLING HEART CTR-METROPOLITAN",
+        address: "555 Martin Luther King Blvd.",
+        location: "Newark",
+        latitude: 40.7343440656717,
+        longitude: -74.18079849033363,
+    },
+    {
+        name: "JEHOVAH JIREH PRAISE & WORSHIP",
+        address: "505 So. 15th St.",
+        location: "Newark",
+        latitude: 40.73787561059256,
+        longitude: -74.20677073266299,
+    },
+    {
+        name: "NUTLEY FAMILY SERVICES",
+        address: "169 Chestnut Street",
+        location: "Nutley",
+        latitude: 40.818082890750475,
+        longitude: -74.1555719828645,
+    },
+    {
+        name: "VINCENT UNITED METHODIST CHURCH",
+        address: "100 Vincent Pl",
+        location: "Nutley",
+        latitude: 40.81722848880836,
+        longitude: -74.15787589032728,
+    },
+    {
+        name: "CHURCH OF EPIPHANY OUTREACH",
+        address: "105 Main St",
+        location: "Orange",
+        latitude: 40.784513413770156,
+        longitude: -74.14968370567063,
+    },
+    {
+        name: "S.D.A. CHURCH OF THE ORANGES",
+        address: "308 Reynolds Ter",
+        location: "Orange",
+        latitude: 40.76402481920617,
+        longitude: -74.2350279596498,
+    },
+    { 
+      latitude: 40.77171502461515, longitude:  -74.22442426334196, name: "EBENEZER BAPTIST CHURCH", address: "153 William St",  location: "Orange"},
+        { latitude: 40.76739977883283, longitude: -74.24477102749978, name: "INTERFAITH FOOD PANTRY OF THE ORANGES", address: "357 S Jefferson St.", location: "Orange"},
+         { latitude:40.76664985475785, longitude: -74.2277913075183, name: "HOUSE OF PRAYER FOOD PANTRY", address: "138 Hickory Street", location: "Orange"},
+         
+        { latitude:40.76486122672135, longitude: -74.242633142329, name: "LOVE OF JESUS MINISTRIES", address: "448 Highland Avenue", location: "Orange"},
+         { latitude:40.77120762511046,  longitude:-74.23081272101244, name: "IGLESIA CRISTIANA EVANGELIO CO", address: "49 S. Day St", location: "Orange"},
+          { latitude:40.7825713286205,   longitude:-74.22514547683554, name: "MT. CARMEL BAPTIST CHURCH", address: "381 CLEAVELAND STREET", location: "Orange"},
+          { latitude:40.75188539398803,  longitude:-74.25558621287585, name: "OHEB SHALOM CONG", address: "170 Scotland Rd", location: "South Orange"},
+          { latitude: 40.788868932339156, longitude: -74.23108903450542, name: "HOLY TRINITY-WEST ORANGE FOOD PANTRY", address: "315 Main Street", location: "West Orange"},
+       { latitude: 40.75655085743836, longitude: -74.1702068627935, name: "St. Michaels Roman Catholic Church", address: "172 Broadway", location: "Newark" },
+         
+        ];
+
+    function getDistances() {
+         
+      var resultElement = document.getElementById("result");
+      resultElement.style.display = "block";
+      resultElement.innerHTML = ''; // Clear previous results
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          var userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          var promises = []; // Array to store fetch promises
+
+          foodPantries.forEach(pantry => {
+            var origin = `${userLocation.lat},${userLocation.lng}`;
+            var destination = `${pantry.latitude},${pantry.longitude}`;
+            var url = `https://api.nextbillion.io/distancematrix/json?origins=${origin}&destinations=${destination}&mode=4w&key=${apiKey}`;
+
+            var promise = fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                var element = data.rows[0].elements[0];
+                var distanceInMiles = (element.distance.value / 1609.34).toFixed(2) + " miles";
+                var durationInSeconds = element.duration.value;
+                var formattedDuration = secondsToHms(durationInSeconds);
+                var resultText = `
+                   <button class="result-button" onclick="window.location.href='page6.html'">
+                  <div>
+                    <div>
+                      <div>${pantry.name}</div>
+                      <div>${pantry.location}</div>
+                      <div>${pantry.address}</div>
+                    </div>
+                    <div class="duration">${formattedDuration}</div>
+                    <div class="distance">${distanceInMiles}</div>
+                  </button>`;
+                return { resultText, durationInSeconds };
+              });
+
+            promises.push(promise);
+          });
+
+          Promise.all(promises).then(results => {
+            results.sort((a, b) => a.durationInSeconds - b.durationInSeconds); // Sort results by driving duration
+
+            results.forEach(result => {
+              
+              
+              resultElement.innerHTML += result.resultText;
+            });
+          });
+        }, error => {
+          resultElement.innerHTML = '<p>Unable to retrieve your location</p>';
+        });
+      } else {
+        resultElement.innerHTML = '<p>Geolocation is not supported by this browser</p>';
+      }
+    }
+
+    function secondsToHms(d) {
+      d = Number(d);
+      var h = Math.floor(d / 3600);
+      var m = Math.floor(d % 3600 / 60);
+      var s = Math.floor(d % 3600 % 60);
+
+      var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+      var mDisplay = m > 0 ? m + (m == 1 ? " minute " : " minutes ") : " ";
+
+      return hDisplay + mDisplay;
+    }
+    let currentView = 'list';
+
+function toggleMenu() {
+      const menu = document.querySelector('.menu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+function switchView(view) {
+  const resultElement = document.getElementById('result');
+  const mapFrame = document.getElementById('mapFrame');
+  
+  if (view === 'list') {
+    resultElement.style.display = 'block';
+    mapFrame.style.display = 'none';
+  } else {
+    resultElement.style.display = 'none';
+    mapFrame.style.display = 'block';
+    mapFrame.src = 'paste-2.txt';
+  }
+  
+  toggleMenu();
+}
+
+function initMap() {
+  // This function will initialize and display the map
+  // You'll need to implement this using a mapping API like Google Maps or Leaflet
+  // For now, we'll just display a placeholder message
+  const mapElement = document.getElementById('map');
+  mapElement.innerHTML = 'Map view is not implemented yet.';
+}
+     
+  </script>
+</body>
+</html>

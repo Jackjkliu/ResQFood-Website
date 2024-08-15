@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Food Pantry Locator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        .infoWindow-content {
+            width: 200px;
+            text-align: center;
+        }
+        #contentWindow {
+            display: none;
+            height: 50vh;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: white;
+            border-top: 1px solid #ccc;
+        }
+      .next-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #007AFF;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+  }
+
+  .arrow {
+    display: inline-block;
+    animation: arrow-motion 1s infinite;
+  }
+
+  @keyframes arrow-motion {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+  }
+    </style>
+</head>
+<body>
+    <div id="container" style="display: flex; flex-direction: column; height: 100vh;">
+        <div id="map"></div>
+        <div id="contentWindow">
+            <div id="content"></div>
+            <a href="page6.html" class="next-button">Next <span class="arrow">→</span></a>
+        </div>
+    </div>
+    
+    <script>
+        let map;
+        let markers = {};
+        let currentInfoWindow = null;
+
+        function initMap() {
+            console.log("initMap function called");
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 40.800987243652344, lng: -74.32215118408203 },
+                zoom: 14
+            });
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        console.log("Geolocation successful");
+                        var userLatitude = position.coords.latitude;
+                        var userLongitude = position.coords.longitude;
+
+                        var userMarker = new google.maps.Marker({
+                            position: { lat: userLatitude, lng: userLongitude },
+                            map: map,
+                            title: 'Your Location'
+                        });
+
+                        map.setCenter({ lat: userLatitude, lng: userLongitude });
+                        addFoodPantryMarkers(map);
+                    },
+                    function (error) {
+                        console.error("Geolocation error:", error);
+                        alert("Unable to retrieve your location. Using default location.");
+                        addFoodPantryMarkers(map);
+                    }
+                );
+            } else {
+                console.log("Geolocation not supported");
+                alert("Geolocation is not supported by your browser. Using default location.");
+                addFoodPantryMarkers(map);
+            }
+        }
+    
+        function addFoodPantryMarkers(map) {
+            const foodPantries = [
+                {
+                    name: "The Apostles House",
+                    address: "18-24 Grant Street",
+                    location: "Newark",
+                    lat: 40.74828871951649,
+                    lng: -74.16966621916775,
+                    phone: "(973) 482-0625",
+                    website: "http://www.apostleshouse.org",
+                    donationHours: "10:00 am–3:00 pm, every week on Monday, Wednesday, Friday",
+                },
+                {
+                    name: "Bethany Baptist Church Pantry",
+                    address: "275 W. Market St / 58 Hartford St",  
+                    location: "Newark",
+                    lat: 40.74443088318194,
+                    lng: -74.18772220818111,
+                    phone: "(973) 623-8161",
+                    website: "https://bethany-newark.org/",
+                    donationHours: "9:00 am–1:00 pm",
+                },
+                {
+                    name: "Little Zion U.A.M.E Church",
+                    address: "154 Stephens St,",
+                    location: "Belleville",
+                    lat: 40.789597529857986,
+                    lng: -74.14856260811335,
+                    phone: "(973) 759-7358",
+                    website: "https://www.littlezionuame.org/",
+                    donationHours: "10:00 AM – 2:30 PM",
+                },
+                {
+                  name: "Love Of Jesus Family Church Of Belleville",
+                  address: "4 N. Hawthorne Lane",
+                  location: "Newark - BELLEVILLE, NJ",
+                  lat: 40.783307903536986,
+                  lng: -74.17540032101145,
+                  phone: "(201) 232-2536",
+                  website: "https://www.littlezionuame.org/",
+                  donationHours: "Every 3rd Saturday of the month, 9:00AM-1:00 PM",
+           },
+           {
+        name: "Isaiah House",
+        address: "238 North Munn Ave",
+        location: "East Orange",
+        lat: 40.76648508392171,
+        lng: -74.20536607683674,
+         phone: "(201) 232-2536",
+        website: "https://isaiahhouse.org/",
+        donationHours: "10:30 am–12:30 pm, every week on Tuesday, Thursday, Monday, Friday",
+    },
+    {
+        name: "New Hope Baptist Church Pantry",
+        address: "144 Norman St",
+        location: "East Orange",
+        lat: 40.779609982425725,
+        lng: -74.20497510382454,
+        phone: "(973) 678-6710",
+        website: "https://isaiahhouse.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Inner City Emerg (Joi's Angels)",
+        address: "114 S. Arlington Avenue",
+        location: "East Orange",
+        lat: 40.7573509556083,
+        lng: -74.21329794800226,
+         phone: "(973) 395-4348",
+        website: "https://www.joisangels.com/contact",
+        donationHours: "Don't know",
+    },
+    {
+        name: "Imani Baptist Church",
+        address: "113-117 Elmwood Ave",
+        location: "East Orange",
+        lat: 40.753159547102335,
+        lng: -74.21878173450814,
+        phone: "(862) 520-1898",
+        website: "https://www.imanibaptistchurch.com/",
+        donationHours: "DK",
+    },
+    {
+        name: "Calvary Baptist Church",
+        address: "66 So. Grove Street",
+        location: "East Orange",
+        lat: 40.75496841525514,
+        lng: -74.20403304984889,
+        phone: "(973) 676-6467",
+        website: "https://calvarybaptistnj.org/",
+        donationHours: "DK",
+    },
+       {
+        name: "New Light Baptist Church Food Pantry",
+        address: "89-91 Dewey Street",
+        location: "Bloomfield, NJ",
+        lat: 40.8215562642556,
+        lng: -74.1808459288352,
+        phone: "(973) 338-5888",
+        website: "https://www.wearenewlight.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "East Orange Comm. Dev. Corp",
+        address: "490 Main St",
+        location: "East Orange, NJ",
+        lat: 40.886110605334785,
+        lng: -74.24483261915721,
+        phone: "(973) 266-5315",
+        website: "https://www.eohcdc.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Salvation Army-East Orange",
+        address: "430 Main St",
+        location: "East Orange, NJ",
+        lat: 40.88672317053373,
+        lng: -74.24219943449795,
+        phone: "(973) 672-0262",
+      website:"https://easternusa.salvationarmy.org/new-jersey/orange/",
+        donationHours: "DK",
+    },
+    {
+        name: "Peaceful Zion Baptist Church",
+        address: "213 Rhode Island Ave",
+        location: "East Orange, NJ",
+        lat: 40.75776388155932,
+        lng: -74.20851993450785,
+         phone: " (973) 674-4048",
+     website:"https://www.facebook.com/PZBCEastOrange/",
+        donationHours: "DK",
+    },
+    {
+        name: "Isaiah House",
+        address: "238 North Munn Ave",
+        location: "East Orange, NJ",
+        lat: 40.72128716021824,
+        lng: -74.22428204800502,
+         phone: " (973) 678-5882",
+     website:"https://isaiahhouse.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "New Hope Baptist Church Pantry",
+        address: "144 Norman St",
+        location: "East Orange, NJ",
+        lat: 40.72295661796696,
+        lng: -74.21820472101606,
+         phone: "(973) 678-6710",
+     website:"https://www.nhbceo.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Inner City Emerg (Joi's Angels)",
+        address: "114 S. Arlington Avenue",
+        location: "East Orange, NJ",
+        lat: 40.729076639280954,
+        lng: -74.22341416334528,
+        phone: "(973) 395-4348",
+     website:"https://www.joisangels.com/",
+        donationHours: "DK",
+    },
+    {
+        name: "Imani Baptist Church",
+        address: "113-117 Elmwood Ave",
+        location: "East Orange, NJ",
+        lat: 40.72863212556445,
+        lng: -74.2333939711648,
+        phone: "(862) 520-1898",
+       website:"https://www.imanibaptistchurch.com/",
+        donationHours: "DK",
+    },
+    {
+        name: "Calvary Baptist Church",
+        address: "66 So. Grove Street",
+        location: "East Orange, NJ",
+        lat: 40.714142421903,
+        lng: -74.23454870567598,
+         phone: "(973) 676-6467",
+       website:"https://calvarybaptisteo.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Salem Seventh-Day Adventist",
+        address: "10 S. Oraton Parkway",
+        location: "East Orange, NJ",
+        lat: 40.720988172895666,
+        lng: -74.23388142286264,
+       phone: "(973) 266-1488",
+       website:"https://salemfrench.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Bethlehem French SDA Church",
+        address: "30 N. Clinton St.",
+        location: "East Orange, NJ",
+        lat: 40.76506043864116,
+        lng: -74.2135582633425,
+       phone: "(973) 672-2929",
+     website:"https://bethlehemnj.adventistchurch.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "New Reid Temple Church of God in Christ",
+        address: "154 N. Oraton Parkway",
+        location: "East Orange, NJ",
+        lat: 40.763314242484476,
+        lng: -74.20558847868335,
+           phone: "(973) 388-0050",
+     website:"https://nrtcogic.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Church Women United Pantry",
+        address: "1240 Clinton Ave",
+        location: "Irvington, NJ",
+        lat: 40.72128716021824,
+        lng: -74.22428204800502,
+           phone: "(973) 373-5930",
+     website:"https://mendnj.org/event/church-women-united/",
+        donationHours: "DK",
+    },
+    {
+        name: "Solid Rock Baptist Church",
+        address: "644 Chancellor Avenue",
+        location: "Irvington, NJ",
+        lat: 40.72295661796696,
+        lng: -74.21820472101606,
+           phone: "(973) 373-8129",
+     website:"https://www.givelify.com/donate/solid-rock-baptist-church-irvington-nj-2j7wy5MTUxOTM3NQ==/donation/amount",
+        donationHours: "DK",
+    },
+    {
+        name: "Bethel French SDA Church",
+        address: "188 Union Avenue",
+        location: "Irvington, NJ",
+        lat: 40.729076639280954,
+        lng: -74.22341416334528,
+          phone: "(973) 373-0092",
+     website:"https://mybethelsda.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Christ Glory Food Pantry",
+        address: "1108 Grove Street",
+        location: "Irvington, NJ",
+        lat: 40.72863212556445,
+        lng: -74.2333939711648,
+          phone: "(973) 776-2179",
+     website:"https://www.cgimcommunitydev.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Deeper Life Bible Church",
+        address: "23 S. 20th Street",
+        location: "Irvington, NJ",
+        lat: 40.714142421903,
+        lng: -74.23454870567598,
+           phone: "(973) 202-3989",
+     website:"https://dlbcnj.org/",
+        donationHours: "DK",
+    },
+         {
+        name: "Human Needs Food Pantry",
+        address: "9 Label Street",
+        location: "Montclair, NJ",
+        lat: 40.81818616324979,
+        lng: -74.21153640566801,
+        phone: "(973) 746-4669",
+        website:"https://www.humanneedsfoodpantry.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Salvation Army - Montclair",
+        address: "123 Elm Street",
+        location: "Montclair, NJ",
+        lat: 40.81433218969013,
+        lng: -74.22173612100912,
+        phone: "(973) 744-3312",
+       website:"https://easternusa.salvationarmy.org/new-jersey/montclair/",
+        donationHours: "DK",
+    },
+    {
+        name: " Grace Pointe 7th Day Adventist Church",
+        address: "15 Elmwood Ave",
+        location: "Montclair, NJ",
+        lat: 40.80848141927362,
+        lng: -74.2132725482195,
+       phone: " (973) 746-1911",
+       website:"https://gracepointesda.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Toni's Kitchen @ St. Luke's Church",
+        address: "73 S. Fullerton Ave",
+        location: "Montclair, NJ",
+        lat: 40.81002444197794,
+        lng: -74.21794030566859,
+           phone: "(973) 932-0768",
+       website:"https://slechurch.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Salvation Army - NWK West",
+        address: "699 Springfield Avenue",
+        location: "Newark, NJ",
+        lat:40.7293847518564,
+        lng: -74.21381262306171,
+       phone: "(973) 932-0768",
+       website:"https://easternusa.salvationarmy.org/new-jersey/newark/newark-westside/",
+        donationHours: "DK",
+    },
+    {
+        name: "First Hopewell Baptist Church",
+        address: "11 Oak Street",
+        location: "Newark, NJ",
+        lat: 40.75491729773876,
+        lng: -74.19242427683764,
+          phone: "(973) 485-8100",
+       website:"http://1sthopewell.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "St. James Social Service Corp.",
+        address: "12 Pine Avenue",
+        location: "Newark, NJ",
+        lat: 40.732408130325275,
+        lng: -74.181082707521,
+          phone: "(973) 624-4007",
+       website:"https://stjamesssc.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Franciscan Charities-St.Ann's",
+        address: "13 Walnut Street",
+        location: "Newark, NJ",
+        lat: 40.73757239912521,
+        lng: -74.19251369033337,
+         phone: "(908) 403-6252",
+       website:"https://www.franciscancharitiesinc.org/",
+        donationHours: "DK",
+    },
+    
+    {
+        name: "MEND",
+        address: "15 Mulberry Lane",
+        location: "Newark, NJ",
+        lat: 40.72023682029925,
+        lng: -74.18556654985147,
+          phone: "(862) 250-5216",
+       website:"https://mendnj.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Zion United Church of Christ",
+        address: "16 Oak Street",
+        location: "Newark, NJ",
+        lat: 40.7569782912169,
+        lng: -74.15817897868388,
+         phone: "(973) 373-1238",
+       website:"DK",
+        donationHours: "DK",
+    },
+    {
+        name: "MT. Zion Baptist Church",
+        address: "17 Pine Avenue",
+        location: "Newark, NJ",
+        lat: 40.758090007622606,
+        lng: -74.17021932101343,
+           phone: "(973) 482-1915",
+       website:"https://www.mountzionbaptistnewarknj.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "Emerg. Food and Nutrition NTWK",
+        address: "18 Walnut Street",
+        location: "Newark, NJ",
+        lat: 40.73398406655154,
+        lng: -74.17801369033367,
+          phone: "(973) 482-1915",
+       website:"https://www.mountzionbaptistnewarknj.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "House of Mercy Missions",
+        address: "20 Elm Street",
+        location: "Newark, NJ",
+        lat: 40.73081565778868,
+        lng: -74.2068437486113,
+         phone: "(973) 642-6226",
+       website: "https://www.instagram.com/houseofmercymission/",
+        donationHours: "DK",
+    },
+    {
+        name: "New Communities Corp. Senior",
+        address: "21 Oak Avenue",
+        location: "Newark, NJ",
+        lat: 40.736334742893014,
+        lng: -74.1910101345094,
+           phone: "(973)-623-6952",
+       website:"https://www.newcommunity.org/",
+        donationHours: "DK",
+    },
+        { 
+        lat: 40.735330008121956,  
+        lng: -74.18000549281531, 
+        name: "TOUSSAINT FOOD PANTRY",
+        location: "Newark",
+        address: "528 Martin Luther King Blvd",
+         phone: "(973) 792-5790",
+       website:"https://www.smcnewark.org/food-pantry",
+        donationHours: "DK",
+    },
+    { 
+       lat: 40.73297040004622, 
+        lng: -74.18935180567456, 
+        name : "EMMANUEL CHURCH OF CHRIST",
+        location: "Newark",
+        address: "54 Irvine Turner Blvd",
+         phone: "(973) 621-9810",
+         website:"http://www.emmanuelchurchofchrist.org/Emmanuel_Church_Of_Christ/Welcome.html",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.729757086034176,  
+        lng: -74.17472881916925, 
+        name: "Newark Emergency Services",
+       location: "Newark",
+        address: "982 Broad St",
+         phone: "(973) 639-2100",
+         website:"https://www.nesfnj.org/",
+        donationHours: "DK",
+    },
+    { 
+        lat : 40.75208327434918,  
+        lng: -74.19295013450828, 
+        name: "ROSEVILLE PRESBYTERIAN CHURCH",
+        location: "Newark",
+        address: "36 Roseville Ave",
+          phone: "(973) 483-3361",
+         website:"https://www.rosevillechurch.org/",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.707530032194484,  
+        lng: -74.21792759218208, 
+        name: "Mt. Vernon Baptist Church",
+        location: "Newark",
+        address: "709 Clinton Avenue",
+       phone: "(973) 374-3154",
+         website:"https://mtvmbc.org/about-mvbc.html",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.707530032194484, 
+        lng: -74.21792759218208, 
+        name: "Emanuel Baptist Church",
+       location: "Newark",
+        address: "228 Chancellor Ave",
+        phone: "(973) 926-1530",
+         website:"none",
+        donationHours: "DK",
+        
+    },
+    { 
+        lat: 40.7060255977914, 
+        lng: -74.20589499999998, 
+        name: "CALVARY GOSPEL CHURCH",
+        location: "Newark",
+        address: "17 Lyons Avenue",
+         phone: "(973) 926-3575",
+         website:"https://www.facebook.com/CGCNWK/",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.710735990749036,
+        lng: -74.2154965191706, 
+        name: "VICTORY AT SUNRISE BAPTIST CHURCH",
+        location: "Newark",
+        address: "376 Clinton Pl",
+        phone: "(973) 923-0485",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.70537426993038, 
+        lng: -74.2178213228638, 
+        name: "FRANKLIN - ST. JOHN'S COMMUNITY",
+        location: "Newark",
+        address: "142 Maple Ave",
+        phone: "(973) 926-6237",
+         website:"https://ampleharvest.org/food-pantries/franklin-st-johns-community-center-1044/",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.710555054324935, 
+        lng: -74.22300393820427, 
+        name: "CLEARVIEW BAPTIST CHURCH",
+        location: "Newark",
+        address: "357 Chancellor Ave",
+          phone: "(973) 926-0471",
+         website:"https://cvbcnewark.org/",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.75375074558457, 
+        lng: -74.17687472613992, 
+        name: "UNITED NEIGHBORS DEVE. CORP",
+        location: "Newark",
+        address: "487 Orange Street",
+          phone: "(973) 350-0221",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.73672478928626, 
+        lng: -74.19391394985018, 
+        name: "NEW BORN HOLY CHURCH",
+        location: "Newark",
+        address: "250 Bergen Street",
+           phone: "(973) 622-7868",
+         website:"https://www.facebook.com/NewBornHolyChurchNewarkNJCommunity/",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.72342238553982, 
+       lng: -74.18672605169763, 
+        name: "GREATER MT. MORIAH HOME FOREIG",
+        location: "Newark",
+        address: "210 Clinton Avenue",
+        phone: "(973) 824-1805",
+         website:"https://www.greatermoriah.org/",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.76192200376331, 
+        lng: -74.17101648319617, 
+        name: "NEWARK SPANISH 7TH DAY ADVENTIST",
+        location: "Newark",
+        address: "58 2nd Avenue",
+           phone: "(973) 483-1820",
+         website:"https://newarkspanishnj.adventistchurch.org/",
+        donationHours: "DK",
+    },
+    { 
+        lat: 40.71808566199103, 
+        lng: -74.19870494401131, 
+        name: "NEW DAWN MISS. BAPT. CHURCH",
+        location: "Newark",
+        address: "1 Belmont Runyon Way",
+           phone: "(973) 483-1820",
+         website:"https://www.facebook.com/NDBCVI/",
+        donationHours: "DK",
+    },
+        { 
+        name: "FIRST CORINTHIAN BAPT. CHURCH",
+        address: "595 South 10th Street",
+        location: "Newark, NJ",
+        lat: 40.73217886107068,
+        lng: -74.20382649218018,
+               phone: "(973) 623-1612",
+         website:"https://fcbcnyc.org/online",
+        donationHours: "DK",
+    },
+    { 
+        name: "CHURCH OF THE ETERNAL GOD",
+        address: "190 Highland Avenue",
+        location: "Newark, NJ",
+        lat: 40.76293368430769,
+        lng: -74.1770365631712,
+               phone: "(973) 460-9334",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        name: "TRINITY U.A.M.E.",
+        address: "226 Warren Street",
+        location: "Newark, NJ",
+        lat: 40.74501255328225,
+        lng: -74.15849171916803,
+            phone: "(973) 624-5541",
+         website:"https://uamechurch.org/new-jersey",
+        donationHours: "DK",
+    },
+    { 
+        name: "WILLING HEART CTR-METROPOLITAN",
+        address: "555 Dr. MLK Blvd",
+        location: "Newark, NJ",
+        lat: 40.73449040017754,
+        lng: -74.18081994800403,
+             phone: " (973) 622-2100",
+         website:"WILLING HEART CTR-METROPOLITAN",
+        donationHours: "DK",
+    },
+    { 
+        name: "ST. PAUL TABERNACLE",
+        address: "530-532 Clinton Avenue",
+        location: "Newark, NJ",
+        lat: 40.72186208368334,
+        lng: -74.2024785056754,
+            phone: "(973) 643-8700",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        name: "CANAAN BAPTIST CHURCH",
+        address: "131 Pomona Avenue",
+        location: "Newark, NJ",
+        lat: 40.7080453299288,
+        lng: -74.2124986056765,
+           phone: "(973) 926-4151",
+         website:"https://www.cbcnewark.com/",
+        donationHours: "DK",
+    },
+    { 
+        name: "MARANATHA SDA CHURCH",
+        address: "890 South Orange Ave",
+        location: "Newark, NJ",
+        lat: 40.74914831119323,
+        lng: -74.22483870753993,
+             phone: "(973) 416-5300",
+         website:"http://maranathanj.com/",
+        donationHours: "DK",
+    },
+    { 
+        name: "IGREJA EVANGELICA VIDA NOVA",
+        address: "150 Broadway",
+        location: "Newark, NJ",
+        lat: 40.755196774689864,
+        lng: -74.17046639555961,
+            phone: "(630) 359-1526",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        name: "CALVARY TOUCH OF GOD CHURCH",
+        address: "636-638 Bergen Street",
+        location: "Newark, NJ",
+        lat: 40.72245472590239,
+        lng: -74.19948293820337,
+           phone: "(973) 848-1113",
+         website:"https://www.calvarytouchofgod.org/",
+        donationHours: "DK",
+    },
+    { 
+        name: "ST. JOHN BAPTIST CHURCH",
+        address: "137 Fairmont Avenue",
+        location: "Newark, NJ",
+        lat: 40.74271516597509,
+        lng: -74.19369868465921,
+            phone: "(973) 623-0982",
+         website:"https://www.facebook.com/StJohhnBaptistChurch/",
+        donationHours: "DK",
+    },
+    { 
+        name: "HOUSE OF LOVE SOUP KITCHEN",
+        address: "589-595 Central Ave",
+        location: "Newark, NJ",
+        lat: 40.75027463231869,
+        lng: -74.19906336149721,
+         phone: "(973) 416-7596",
+         website:"https://houseoflovesoupkitchen.org/",
+        donationHours: "DK",
+        
+    },
+    { 
+        name: "DELIVERANCE HOLISTIC CARE PROG",
+        address: "488 South Orange Ave",
+        location: "Newark, NJ",
+        lat: 40.74276398770436,
+        lng: -74.20682200567383,
+         phone: "(973) 371-1460",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        name: "HOMBRES Y MUJERES DE VALOR PAR",
+        address: "347 6th Avenue",
+        location: "Newark, NJ",
+        lat: 40.75868811894711,
+        lng: -74.19337197683738,
+            phone: "(973) 388-3406",
+         website:"https://www.hombresymujeresdevalor.com/",
+        donationHours: "DK",
+    },
+    { 
+        name: "JOBETH, INC.",
+        address: "203 Johnson Avenue",
+        location: "Newark, NJ",
+        lat:  40.71515321099625,
+        lng: -74.1939285153408,
+          phone: "(917) 819-5687",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        name: "UNITED COMMUNITY CORPORATION",
+        address: "933 South 17th Street",
+        location: "Newark, NJ",
+        lat:  40.723659098700296,
+        lng: -74.21430300567522,
+                 phone: "(973) 642-0181",
+         website:"https://uccnewark.org/",
+        donationHours: "DK",
+    },
+    { 
+        name: "EBEN-EZER FOOD PANTRY",
+        address: "1152 S. Orange Ave.",
+        location: "Newark, NJ",
+        lat: 40.745389011715986,
+        lng: -74.23708152101437,
+        phone: "(973) 373-9205",
+         website:"none",
+        donationHours: "DK",
+    },
+    { 
+        name: "ALLEN VILLAGE CDC",
+        address: "56 19th Avenue",
+        location: "Newark, NJ",
+        lat: 40.73182413161018,
+        lng: -74.21107256334501,
+           phone: "(973) 373-7753",
+         website:"none",
+        donationHours: "DK",
+    },
+    {
+        name: "THE KINGDOM EXPERIENCE CHURCH",
+        address: "667 So, 11th Street",
+        location: "Newark",
+        lat: 40.73027950582577,
+        lng: -74.20565086149875,
+             phone: "(973) 704-3669",
+         website:"none",
+        donationHours: "DK",
+    },
+    {
+        name: "NEWARK BIBLE FELLOWSHIP",
+        address: "30 Randolph Place",
+        location: "Newark",
+        lat: 40.72218428322437,
+        lng: -74.2117687423296,
+        phone: "(973) 373-3677",
+         website:"https://newarkbiblefellowshipchurchnj.com/",
+        donationHours: "DK",
+    },
+    {
+        name: "1st Missionary Church Proclaimers of Righteousness",
+        address: "151 Park Avenue",
+        location: "Newark",
+        lat: 40.76802180010483,
+        lng:-74.18114143811977,
+         phone: "(973) 373-3677",
+         website: "none",
+        donationHours: "DK",
+    },
+    {
+        name: "BEULAH GROVE CHURCH",
+        address: "59 Springdale Avenue",
+        location: "",
+        lat: 40.7649522908418,
+        lng: -74.18993983266093,
+                 phone: " (973) 482-4054",
+         website: "http://www.beulahgrovebaptist.com/",
+        donationHours: "DK",
+
+    },
+    {
+        name: "BROADWAY HOUSE FOR CONTINUING",
+        address: "298 Broadway",
+        location: "Newark",
+        lat: 40.76062838335546,
+        lng: -74.16881301916678,
+                  phone: " (973) 268-9797",
+         website: "https://broadwayhouse.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "COVENANT HOUSE - NJ",
+        address: "330 Washington St",
+        location: "Newark",
+        lat: 40.733440371899455,
+        lng: -74.1760653865056,
+          phone: "(973) 621-8705",
+         website: "https://covenanthousenj.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "CIRCLE OF LIFE",
+        address: "55 Reeves Pl",
+        location: "Newark",
+        lat: 40.71891569820289,
+        lng: -74.20890123451082,
+             phone: "(862) 763-4859",
+         website: "none",
+        donationHours: "DK",
+    },
+    {
+        name: "FRANCISCAN CHARITIES",
+        address: "242 S 8th St",
+        location: "Newark",
+        lat: 40.73753988188041,
+        lng: -74.19253514800377,
+           phone: "(908) 403-6252",
+         website: "https://www.franciscancharitiesinc.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "COMMUNITY CHURCH OF FAITH",
+        address: "26 Irvine Turner Blvd",
+        location: "Newark",
+        lat: 40.73402271528373,
+        lng: -74.18879254800409,
+            phone: "(973) 642-7949",
+         website: "none",
+        donationHours: "DK",
+    },
+    {
+        name: "UNION CHAPEL COMMUNITY DEVELOP",
+        address: "209 Wainwright St",
+        location: "Newark",
+        lat: 40.71386501571222,
+        lng: -74.22181471732401,
+       phone: "(973) 282-0104",
+         website: "http://www.unionchapelcdc.net/",
+        donationHours: "DK",
+    },
+    {
+        name: "GREATER ABYSSINIAN BAPTIST CHURCH",
+        address: "88 Lyons Ave",
+        location: "Newark",
+        lat: 40.7076081609426,
+        lng: -74.2094452921821,
+             phone: "(973) 923-5205",
+         website: "https://greaterabyssinian.com/",
+        donationHours: "DK",
+    },
+    {
+        name: "ST. ANDREWS EPISCOPAL CHURCH",
+        address: "933 S. 17th Street",
+        location: "Newark",
+        lat: 40.723659098700296,
+        lng: -74.21429227684003,
+        phone: "(973) 375-3012",
+         website: "https://www.episcopalassetmap.org/dioceses/diocese-newark/list/st-andrews-episcopal-church-0",
+        donationHours: "DK",
+    },
+    {
+        name: "WILLING HEART CTR-METROPOLITAN",
+        address: "555 Martin Luther King Blvd.",
+        location: "Newark",
+        lat: 40.7343440656717,
+        lng: -74.18079849033363,
+       phone: "(973) 622-2100",
+         website: "https://www.willingheartccc.com/",
+        donationHours: "DK",
+    },
+    {
+        name: "JEHOVAH JIREH PRAISE & WORSHIP",
+        address: "505 So. 15th St.",
+        location: "Newark",
+        lat: 40.73787561059256,
+        lng: -74.20677073266299,
+        phone: " (973) 824-2006",
+         website: "https://www.jjpwcc.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "NUTLEY FAMILY SERVICES",
+        address: "169 Chestnut Street",
+        location: "Nutley",
+        lat: 40.818082890750475,
+        lng: -74.1555719828645,
+         phone: "(973) 667-1884",
+         website: "https://www.nutleyfamily.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "VINCENT UNITED METHODIST CHURCH",
+        address: "100 Vincent Pl",
+        location: "Nutley",
+        lat: 40.81722848880836,
+        lng: -74.15787589032728,
+       phone: "(973) 667-5440",
+         website: "https://www.vincentumc.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "CHURCH OF EPIPHANY OUTREACH",
+        address: "105 Main St",
+        location: "Orange",
+        lat: 40.784513413770156,
+        lng: -74.14968370567063,
+       phone: "(973) 629-7713",
+         website: "https://eaccorange.org/",
+        donationHours: "DK",
+    },
+    {
+        name: "S.D.A. CHURCH OF THE ORANGES",
+        address: "308 Reynolds Ter",
+        location: "Orange",
+        lat: 40.76402481920617,
+        lng: -74.2350279596498,
+       phone: "(973) 678-1951",
+         website: "https://cotosda.org/",
+        donationHours: "DK",
+    },
+    { 
+      lat: 40.77171502461515, lng:  -74.22442426334196, name: "EBENEZER BAPTIST CHURCH", address: "153 William St",  location: "Orange",   phone: "(973) 673-8132",
+         website: "https://www.ebcorange.org/",
+        donationHours: "DK",},
+        { lat: 40.76739977883283, lng: -74.24477102749978, name: "INTERFAITH FOOD PANTRY OF THE ORANGES", address: "357 S Jefferson St.", location: "Orange",phone: "(973) 856-4000", website: "https://www.orangesfoodpantry.org/", donationHours: "DK",},
+         { lat:40.76664985475785, lng: -74.2277913075183, name: "HOUSE OF PRAYER FOOD PANTRY", address: "138 Hickory Street", location: "Orange",phone: "(973) 676-8141",
+         website: "none",
+        donationHours: "DK",},
+         
+        { lat:40.76486122672135, lng: -74.242633142329, name: "LOVE OF JESUS MINISTRIES", address: "448 Highland Avenue", location: "Orange", phone: "(973) 676-4200",
+         website: "https://theloveofjesus.org/",
+        donationHours: "DK",},
+         { lat:40.77363159519184,   lng:-74.23476930567139, name: "IGLESIA CRISTIANA EVANGELIO CO", address: "420 Main Street", location: "Orange", phone: "(973) 364-7683",
+         website: "none",
+        donationHours: "DK",},
+          { lat:40.7825713286205,   lng:-74.22514547683554, name: "MT. CARMEL BAPTIST CHURCH", address: "381 CLEAVELAND STREET", location: "Orange", phone: "(973) 675-6500",
+         website: "none",
+        donationHours: "DK",},
+          { lat:40.75188539398803,  lng:-74.25558621287585, name: "OHEB SHALOM CONG", address: "170 Scotland Rd", location: "South Orange", phone: "(973) 762-7067",
+         website: "https://ohebshalom.org/",
+        donationHours: "DK",},
+          { lat: 40.788868932339156, lng: -74.23108903450542, name: "HOLY TRINITY-WEST ORANGE FOOD PANTRY", address: "315 Main Street", location: "West Orange", phone: "(201) 341-9217",
+         website: "http://www.holytrinitywo.org/",
+        donationHours: "DK",},
+       { lat: 40.75655085743836, lng: -74.1702068627935, name: "St. Michaels Roman Catholic Church", address: "172 Broadway", location: "Newark", phone: "(973) 484-7100",
+         website: "https://stmichaelsparish.org/",
+        donationHours: "DK", },           
+              
+            ];
+
+            const pantryIcon = 'https://i.postimg.cc/FR6J17Js/welfareroom.png';
+
+            foodPantries.forEach(pantry => {
+                const marker = new google.maps.Marker({
+                    position: { lat: pantry.lat, lng: pantry.lng },
+                    map: map,
+                    icon: pantryIcon
+                });
+
+                markers[pantry.name] = marker;
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: createInfoWindowContent(pantry.name, pantry.address, pantry.location, pantry.website, pantry.donationHours, pantry.phone)
+                });
+
+                marker.addListener('click', () => {
+                    if (currentInfoWindow) {
+                        currentInfoWindow.close();
+                    }
+                    infoWindow.open(map, marker);
+                    currentInfoWindow = infoWindow;
+                });
+
+                infoWindow.addListener('closeclick', () => {
+                    closeContentWindow();
+                });
+            });
+        }
+
+        function createInfoWindowContent(pantryName, pantryAddress, pantryLocation, pantryWebsite, pantryDonationHours, pantryPhone) {
+            const div = document.createElement('div');
+            div.className = 'infoWindow-content';
+            div.innerHTML = `
+                <div style="padding: 10px;">
+                    <div onclick="handlePantryClick('${pantryName}', '${pantryAddress}', '${pantryLocation}', '${pantryWebsite || ''}', '${pantryDonationHours || ''}', '${pantryPhone || ''}')" style="cursor: pointer;">
+                        <div style="font-weight: bold;">${pantryName}</div>
+                        <div>${pantryAddress}, ${pantryLocation}</div>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        function handlePantryClick(pantryName, pantryAddress, pantryLocation, pantryWebsite, pantryDonationHours, pantryPhone) {
+    console.log("handlePantryClick called for:", pantryName);
+    const contentWindow = document.getElementById('contentWindow');
+    const content = document.getElementById('content');
+    const mapDiv = document.getElementById('map');
+    contentWindow.style.display = 'block';
+    mapDiv.style.height = '50vh';
+
+    const encodedAddress = encodeURIComponent(`${pantryAddress}, ${pantryLocation}`);
+
+    content.innerHTML = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; height: 100vh; display: flex; flex-direction: column; background-color: #f5f5f5;">
+            <div style="background-color: white; padding: 15px; border-bottom: 1px solid #e0e0e0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
+                <a href="page6.html" class="next-button" style="position: absolute; right: 15px; top: 15px; text-decoration: none; color: #007AFF; font-size: 18px;">
+                    Next <span class="arrow" style="display: inline-block; animation: arrow-motion 1s infinite;">→</span>
+                </a>
+                <div style="text-align: center;">
+                    <h2 style="margin: 5px 0; font-size: 20px; font-weight: bold;">${pantryName}</h2>
+                    <p style="margin: 0; color: #666; font-size: 16px;">${pantryAddress}, ${pantryLocation}</p>
+                </div>
+            </div>
+
+            <div style="padding: 80px 20px 20px; flex-grow: 1; overflow-y: auto;">
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}" target="_blank" style="display: block; background-color: #FBACC1; color: white; text-align: center; padding: 15px; border-radius: 10px; text-decoration: none; font-weight: bold; margin-bottom: 20px;">
+                    Get Directions
+                </a>
+
+                <div style="background-color: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                    <h3 style="background-color: #007AFF; color: white; padding: 15px; margin: 0; border-top-left-radius: 10px; border-top-right-radius: 10px;">Contacts</h3>
+                    <div style="padding: 15px;">
+                        ${pantryPhone ? `
+                            <p style="margin: 10px 0;">
+                                <strong>Phone:</strong> <a href="tel:${pantryPhone}" style="color: #007AFF; text-decoration: none;">${pantryPhone}</a>
+                            </p>
+                        ` : ''}
+                        ${pantryWebsite ? `
+                            <p style="margin: 10px 0;">
+                                <strong>Website:</strong> <a href="${pantryWebsite}" target="_blank" style="color: #007AFF; text-decoration: none;">${pantryWebsite}</a>
+                            </p>
+                        ` : ''}
+                    </div>
+                </div>
+
+                ${pantryDonationHours ? `
+                    <div style="background-color: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3 style="background-color: #4CAF50; color: white; padding: 15px; margin: 0; border-top-left-radius: 10px; border-top-right-radius: 10px;">Donation Details</h3>
+                        <div style="padding: 15px;">
+                            <p style="margin: 10px 0;">
+                                <strong>Drop-off hours:</strong> ${pantryDonationHours}
+                            </p>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    const marker = markers[pantryName];
+    if (marker) {
+        map.setZoom(18);
+        map.panTo(marker.getPosition());
+    }
+    google.maps.event.trigger(map, 'resize');
+}
+
+        function closeContentWindow() {
+            console.log("closeContentWindow called");
+            const contentWindow = document.getElementById('contentWindow');
+            const mapDiv = document.getElementById('map');
+
+            contentWindow.style.display = 'none';
+            mapDiv.style.height = '100vh';
+
+            if (currentInfoWindow) {
+                currentInfoWindow.close();
+                currentInfoWindow = null;
+            }
+
+            google.maps.event.trigger(map, 'resize');
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGEAbo1d_-8mUckiKIN-uWViVgiGI04Sc&callback=initMap">
+    </script>
+</body>
+</html>

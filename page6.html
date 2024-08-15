@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Saving Method</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #FF6F61;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .option-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button {
+            background-color: #FF6F61;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 16px;
+            padding: 20px 24px;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #FF9AA2;
+        }
+        .gif {
+            width: 200px;
+            height: auto;
+            margin-top: 15px;
+        }
+        .larger-image {
+            width: 400px;
+            height: auto;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Choose your method of saving!</h1>
+    <div class="option-container">
+        <div class="option">
+            <a href="page8.html" class="button">
+                I will donate the food myself
+                <img class="gif" src="https://i.postimg.cc/cLD9rCXT/LIMITED-TIME-ONLY-3-unscreen.gif" alt="Animated GIF">
+            </a>
+        </div>
+        <div class="option">
+            <a href="page7.html" class="button">
+                Take help from RESQFood's volunteers!
+                <img class="larger-image" src="https://i.postimg.cc/59qZf4dK/Superhero-Food-Group-by-Ian-Coate-removebg-preview.png" alt="Superhero Food Group">
+            </a>
+        </div>
+    </div>
+</body>
+</html>
