@@ -5,24 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Share Your Donation Details</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+       body {
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #F8F9FA;
         }
         .container {
             text-align: center;
             background-color: white;
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #FF6F61;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #FF4C3B;
+        }
+        .back-button svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
         }
         h1, h2 {
-            color: #333;
+            color: #2C3E50;
         }
         h3 {
             color: #666;
@@ -31,12 +54,20 @@
         button {
             padding: 0.5rem 1rem;
             font-size: 1rem;
-            background-color: #4CAF50;
+            background-color: #FF6F61;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 30px;
             cursor: pointer;
             margin-top: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background-color: #FF4C3B;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         #name-input, #phone-input, #pickup-window-input, #address-input, #product-type-input, #weight-input, #success-message {
             display: none;
@@ -66,7 +97,7 @@
             color: white;
         }
         .step.active {
-            background-color: #4CAF50;
+            background-color: #FF6F61;
         }
         .step-line {
             flex-grow: 1;
@@ -76,11 +107,78 @@
             margin: 0 5px;
         }
         .step-line.active {
-            background-color: #4CAF50;
+            background-color: #FF6F61;
+        }
+        .multiselect-container {
+            position: relative;
+            width: 100%;
+            font-family: 'Arial', sans-serif;
+        }
+        .multiselect-dropdown {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .multiselect-dropdown:hover {
+            border-color: #bdbdbd;
+        }
+        .multiselect-dropdown-list {
+            display: none;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .multiselect-dropdown-list div {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .multiselect-dropdown-list div:hover {
+            background-color: #f5f5f5;
+        }
+        .multiselect-dropdown-list div.selected {
+            background-color: #e3f2fd;
+            font-weight: bold;
+        }
+        .arrow {
+            border: solid #757575;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transition: transform 0.3s ease;
+        }
+        .arrow-down {
+            transform: rotate(45deg);
+        }
+        .arrow-up {
+            transform: rotate(-135deg);
         }
     </style>
 </head>
 <body>
+    <div class="back-button" onclick="window.location.href='home.html'">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </div>
     <div class="container">
         <div class="step-indicator">
             <div class="step active">1</div>
@@ -125,17 +223,32 @@
             <button onclick="nextStep('address')">Next</button>
         </div>
         <div id="product-type-input">
-            <h2>Select Product Type</h2>
-            <select id="product-type">
-                <option value="" disabled selected>Enter product type</option>
-                <option value="Bakery">Bakery</option>
-                <option value="Produce">Produce</option>
-                <option value="Meat">Meat</option>
-                <option value="Dairy">Dairy</option>
-                <option value="Prepared/Perishable">Prepared/Perishable</option>
-                <option value="Beverages">Beverages</option>
-                <option value="Nonfood">Nonfood</option>
-                <option value="Mix">Mix</option>
+            <h2>Select Product Type(s)</h2>
+            <h3>Choose all that apply</h3>
+            <div class="multiselect-container">
+                <div class="multiselect-dropdown" onclick="toggleDropdown()">
+                    <span id="multiselect-text">Select products</span>
+                    <i class="arrow arrow-down" id="dropdown-arrow"></i>
+                </div>
+                <div id="multiselect-options" class="multiselect-dropdown-list">
+                    <div onclick="toggleOption(this)" data-value="Peanut butter">Peanut butter</div>
+                    <div onclick="toggleOption(this)" data-value="Canned soup">Canned soup</div>
+                    <div onclick="toggleOption(this)" data-value="Canned fruit">Canned fruit</div>
+                    <div onclick="toggleOption(this)" data-value="Canned vegetables">Canned vegetables</div>
+                    <div onclick="toggleOption(this)" data-value="Canned stew">Canned stew</div>
+                    <div onclick="toggleOption(this)" data-value="Canned fish">Canned fish</div>
+                    <div onclick="toggleOption(this)" data-value="Canned/bagged beans">Canned/bagged beans</div>
+                    <div onclick="toggleOption(this)" data-value="Canned meat">Canned meat (SPAM, ham or other meat)</div>
+                    <div onclick="toggleOption(this)" data-value="Dried fruit">Dried fruit</div>
+                    <div onclick="toggleOption(this)" data-value="Pasta">Pasta (whole grain preferred)</div>
+                    <div onclick="toggleOption(this)" data-value="Rice">Rice (brown rice preferred)</div>
+                    <div onclick="toggleOption(this)" data-value="Boxed/bagged oatmeal">Boxed/bagged oatmeal</div>
+                    <div onclick="toggleOption(this)" data-value="Boxed cereal">Boxed cereal, whole grain cereal</div>
+                    <div onclick="toggleOption(this)" data-value="Packaged toiletries">Packaged toiletries</div>
+                </div>
+            </div>
+            <select id="product-type" style="display: none;">
+                <option value="" disabled selected>Select products</option>
             </select>
             <button onclick="nextStep('product-type')">Next</button>
         </div>
@@ -148,62 +261,72 @@
         <div id="success-message" style="display:none;">
             <h2>Success!</h2>
             <p>Thank you for your donation. We'll be in touch soon.</p>
-            <form id="sms-form" action="/send-sms" method="POST">
-                <input type="hidden" id="phoneNumber" name="phoneNumber">
-                <input type="hidden" id="fullMessage" name="message">
-                <button type="submit">Send Confirmation SMS</button>
-            </form>
+            <p>A confirmation SMS has been sent to your phone.</p>
         </div>
     </div>
     <script>
-        function startDonation() {
-            document.getElementById('title-screen').style.display = 'none';
-            document.getElementById('name-input').style.display = 'block';
+   // Global variables to store form data
+let formData = {
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    address: '',
+    selectedProducts: [],
+    weight: '',
+    pickupDay: '',
+    pickupTime: ''
+};
+
+let selectedProducts = [];
+
+function startDonation() {
+    document.getElementById('title-screen').style.display = 'none';
+    document.getElementById('name-input').style.display = 'block';
+}
+
+function toggleDropdown() {
+    const dropdown = document.getElementById('multiselect-options');
+    const arrow = document.getElementById('dropdown-arrow');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    arrow.classList.toggle('arrow-up');
+    arrow.classList.toggle('arrow-down');
+}
+
+function toggleOption(option) {
+    option.classList.toggle('selected');
+    const value = option.getAttribute('data-value');
+    const index = selectedProducts.indexOf(value);
+    if (index > -1) {
+        selectedProducts.splice(index, 1);
+    } else {
+        selectedProducts.push(value);
+    }
+    updateMultiselectText();
+    console.log("Updated selected products:", selectedProducts); // Debug log
+}
+
+function updateMultiselectText() {
+    const text = selectedProducts.length > 0 
+        ? selectedProducts.join(', ') 
+        : 'Select products';
+    document.getElementById('multiselect-text').textContent = text;
+}
+
+function nextStep(step) {
+    if (step === 'name') {
+        formData.firstName = document.getElementById('first-name').value;
+        formData.lastName = document.getElementById('last-name').value;
+        if (formData.firstName && formData.lastName) {
+            document.getElementById('name-input').style.display = 'none';
+            document.getElementById('phone-input').style.display = 'block';
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('line1-2').classList.add('active');
+        } else {
+            alert("Please enter both your first and last name.");
         }
-
-        function formatPhoneNumber(input) {
-            let number = input.value.replace(/\D/g, '');
-            if (number.length > 0 && number[0] !== '1') {
-                number = '1' + number;
-            }
-            number = number.substring(0, 11);
-            
-            let formattedNumber = '';
-            if (number.length > 0) {
-                formattedNumber = '+' + number[0];
-                if (number.length > 1) {
-                    formattedNumber += ' (' + number.substring(1, 4);
-                }
-                if (number.length > 4) {
-                    formattedNumber += ') ' + number.substring(4, 7);
-                }
-                if (number.length > 7) {
-                    formattedNumber += '-' + number.substring(7, 11);
-                }
-            }
-            
-            input.value = formattedNumber;
-        }
-
-        document.getElementById('phone-number').addEventListener('input', function(e) {
-            formatPhoneNumber(e.target);
-        });
-
-        function nextStep(step) {
-            if (step === 'name') {
-                const firstName = document.getElementById('first-name').value;
-                const lastName = document.getElementById('last-name').value;
-                if (firstName && lastName) {
-                    document.getElementById('name-input').style.display = 'none';
-                    document.getElementById('phone-input').style.display = 'block';
-                    document.getElementById('step2').classList.add('active');
-                    document.getElementById('line1-2').classList.add('active');
-                } else {
-                    alert("Please enter both your first and last name.");
-                }
-            }  else if (step === 'phone') {
-        const phoneNumber = document.getElementById('phone-number').value;
-        if (phoneNumber.replace(/\D/g, '').length === 11) {  // Changed from 10 to 11
+    } else if (step === 'phone') {
+        formData.phoneNumber = document.getElementById('phone-number').value;
+        if (formData.phoneNumber.replace(/\D/g, '').length === 11) {
             document.getElementById('phone-input').style.display = 'none';
             document.getElementById('pickup-window-input').style.display = 'block';
             document.getElementById('step3').classList.add('active');
@@ -212,139 +335,185 @@
         } else {
             alert("Please enter a valid phone number in the format: +1 (XXX) XXX-XXXX");
         }
-    }
-            else if (step === 'pickup-window') {
-                const selectedDay = document.getElementById('day-picker').value;
-                const selectedTime = document.getElementById('time-picker').value;
-                if (selectedDay && selectedTime) {
-                    document.getElementById('pickup-window-input').style.display = 'none';
-                    document.getElementById('address-input').style.display = 'block';
-                    document.getElementById('step4').classList.add('active');
-                    document.getElementById('line3-4').classList.add('active');
-                } else {
-                    alert("Please select both a day and a time slot.");
-                }
-            } else if (step === 'address') {
-                const address = document.getElementById('address-line').value;
-                if (address) {
-                    document.getElementById('address-input').style.display = 'none';
-                    document.getElementById('product-type-input').style.display = 'block';
-                    document.getElementById('step5').classList.add('active');
-                    document.getElementById('line4-5').classList.add('active');
-                } else {
-                    alert("Please enter your address.");
-                }
-            } else if (step === 'product-type') {
-                const productType = document.getElementById('product-type').value;
-                if (productType) {
-                    document.getElementById('product-type-input').style.display = 'none';
-                    document.getElementById('weight-input').style.display = 'block';
-                    document.getElementById('step6').classList.add('active');
-                    document.getElementById('line5-6').classList.add('active');
-                } else {
-                    alert("Please select a product type.");
-                }
-            } else if (step === 'weight') {
-    const weight = document.getElementById('donation-weight').value;
-    if (weight && parseFloat(weight) > 0) {
-        document.getElementById('weight-input').style.display = 'none';
-        document.getElementById('success-message').style.display = 'block';
-        document.getElementById('step7').classList.add('active');
-        document.getElementById('line6-7').classList.add('active');
-        
-        const phoneNumber = document.getElementById('phone-number').value;
-        const firstName = document.getElementById('first-name').value;
-        const lastName = document.getElementById('last-name').value;
-        const address = document.getElementById('address-line').value;
-        const productType = document.getElementById('product-type').value;
-        const selectedDay = document.getElementById('day-picker').value;
-        const selectedTime = document.getElementById('time-picker').value;
-        
-        const fullMessage = `New donation from ${firstName} ${lastName}. 
-Phone: ${phoneNumber}
-Address: ${address}
-Product Type: ${productType}
-Weight: ${weight} lbs
-Pickup Window: ${selectedDay}, ${selectedTime}`;
+    } else if (step === 'pickup-window') {
+        formData.pickupDay = document.getElementById('day-picker').value;
+        formData.pickupTime = document.getElementById('time-picker').value;
+        if (formData.pickupDay && formData.pickupTime) {
+            document.getElementById('pickup-window-input').style.display = 'none';
+            document.getElementById('address-input').style.display = 'block';
+            document.getElementById('step4').classList.add('active');
+            document.getElementById('line3-4').classList.add('active');
+        } else {
+            alert("Please select both a day and a time slot.");
+        }
+    } else if (step === 'address') {
+        formData.address = document.getElementById('address-line').value;
+        if (formData.address) {
+            document.getElementById('address-input').style.display = 'none';
+            document.getElementById('product-type-input').style.display = 'block';
+            document.getElementById('step5').classList.add('active');
+            document.getElementById('line4-5').classList.add('active');
+        } else {
+            alert("Please enter your address.");
+        }
+    } else if (step === 'product-type') {
+        if (selectedProducts.length > 0) {
+            formData.selectedProducts = selectedProducts;
+            document.getElementById('product-type-input').style.display = 'none';
+            document.getElementById('weight-input').style.display = 'block';
+            document.getElementById('step6').classList.add('active');
+            document.getElementById('line5-6').classList.add('active');
+        } else {
+            alert("Please select at least one product type.");
+        }
+    } else if (step === 'weight') {
+        formData.weight = document.getElementById('donation-weight').value;
+        if (formData.weight && parseFloat(formData.weight) > 0) {
+            document.getElementById('weight-input').style.display = 'none';
+            document.getElementById('success-message').style.display = 'block';
+            document.getElementById('step7').classList.add('active');
+            document.getElementById('line6-7').classList.add('active');
+            
+            const fullMessage = `New donation from ${formData.firstName} ${formData.lastName}. 
+Phone: ${formData.phoneNumber}
+Address: ${formData.address}
+Product Type(s): ${formData.selectedProducts.join(', ')}
+Weight: ${formData.weight} lbs
+Pickup Window: ${formData.pickupDay}, ${formData.pickupTime}`;
 
-        document.getElementById('phoneNumber').value = phoneNumber;
-        document.getElementById('fullMessage').value = fullMessage;
-    } else {
-        alert("Please enter a valid weight greater than 0.");
+            sendSMS(formData.phoneNumber, fullMessage);
+
+            // Redirect to page8.html
+            window.location.href = 'page8.html';
+        } else {
+            alert("Please enter a valid weight greater than 0.");
+        }
     }
 }
+
+function formatPhoneNumber(input) {
+    let number = input.value.replace(/\D/g, '');
+    if (number.length > 0 && number[0] !== '1') {
+        number = '1' + number;
+    }
+    number = number.substring(0, 11);
+    
+    let formattedNumber = '';
+    if (number.length > 0) {
+        formattedNumber = '+' + number[0];
+        if (number.length > 1) {
+            formattedNumber += ' (' + number.substring(1, 4);
         }
-           
-
-        function setupPickupWindow() {
-            const dayPickerContainer = document.getElementById('day-picker-container');
-            const timePickerContainer = document.getElementById('time-picker-container');
-            
-            dayPickerContainer.innerHTML = generateDayPicker();
-            
-            const dayPicker = document.getElementById('day-picker');
-            dayPicker.addEventListener('change', function() {
-                timePickerContainer.innerHTML = generateTimePicker(this.value);
-            });
+        if (number.length > 4) {
+            formattedNumber += ') ' + number.substring(4, 7);
         }
-
-        function generateDayPicker() {
-            const days = [];
-            const today = new Date();
-            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-            for (let i = 0; i < 10; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                
-                let dayString;
-                if (i === 0) {
-                    dayString = `Today (${monthNames[date.getMonth()]} ${date.getDate()})`;
-                } else if (i === 1) {
-                    dayString = `Tomorrow (${monthNames[date.getMonth()]} ${date.getDate()})`;
-                } else {
-                    const dayOfWeek = dayNames[date.getDay()];
-                    const month = monthNames[date.getMonth()];
-                    const dayOfMonth = date.getDate();
-                    dayString = `${dayOfWeek} ${month} ${dayOfMonth}`;
-                }
-                
-                days.push(dayString);
-            }
-
-            return `
-                <select id="day-picker" style="width: 100%; padding: 10px; font-size: 16px; margin-bottom: 10px;">
-                    <option value="" disabled selected>Select pickup day</option>
-                    ${days.map(day => `<option>${day}</option>`).join('')}
-                </select>
-            `;
+        if (number.length > 7) {
+            formattedNumber += '-' + number.substring(7, 11);
         }
+    }
+    
+    input.value = formattedNumber;
+}
 
-        function generateTimePicker(selectedDay) {
-            const today = new Date();
-            let dayOfWeek;
+document.getElementById('phone-number').addEventListener('input', function(e) {
+    formatPhoneNumber(e.target);
+});
 
-            if (selectedDay.startsWith('Today')) {
-                dayOfWeek = today.toLocaleString('en-us', {weekday: 'long'});
-            } else if (selectedDay.startsWith('Tomorrow')) {
-                const tomorrow = new Date(today);
-                tomorrow.setDate(today.getDate() + 1);
-                dayOfWeek = tomorrow.toLocaleString('en-us', {weekday: 'long'});
-            } else {
-                dayOfWeek = new Date(selectedDay).toLocaleString('en-us', {weekday: 'long'});
-            }
-            
-            // Assuming you have a list of available time slots for each day
-            const availableTimeSlots = ['1 PM - 4 PM', '4 PM - 7 PM'];
+function sendSMS(phoneNumber, message) {
+    fetch('/send-sms', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('SMS sent successfully:', data);
+    })
+    .catch((error) => {
+        console.error('Error sending SMS:', error);
+    });
+}
 
-            return `
-                <select id="time-picker" style="width: 100%; padding: 10px; font-size: 16px;">
-                    <option value="" disabled selected>Select pickup time</option>
-                    ${availableTimeSlots.map(slot => `<option value="${slot}">${slot}</option>`).join('')}
-                </select>
-            `;
+function setupPickupWindow() {
+    const dayPickerContainer = document.getElementById('day-picker-container');
+    const timePickerContainer = document.getElementById('time-picker-container');
+    
+    dayPickerContainer.innerHTML = generateDayPicker();
+    
+    const dayPicker = document.getElementById('day-picker');
+    dayPicker.addEventListener('change', function() {
+        timePickerContainer.innerHTML = generateTimePicker(this.value);
+    });
+}
+
+function generateDayPicker() {
+    const days = [];
+    const today = new Date();
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for (let i = 0; i < 10; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
+        
+        let dayString;
+        if (i === 0) {
+            dayString = `Today (${monthNames[date.getMonth()]} ${date.getDate()})`;
+        } else if (i === 1) {
+            dayString = `Tomorrow (${monthNames[date.getMonth()]} ${date.getDate()})`;
+        } else {
+            const dayOfWeek = dayNames[date.getDay()];
+            const month = monthNames[date.getMonth()];
+            const dayOfMonth = date.getDate();
+            dayString = `${dayOfWeek} ${month} ${dayOfMonth}`;
         }
+        
+        days.push(dayString);
+    }
+
+    return `
+        <select id="day-picker" style="width: 100%; padding: 10px; font-size: 16px; margin-bottom: 10px;">
+            <option value="" disabled selected>Select pickup day</option>
+            ${days.map(day => `<option>${day}</option>`).join('')}
+        </select>
+    `;
+}
+
+function generateTimePicker(selectedDay) {
+    const today = new Date();
+    let dayOfWeek;
+    let selectedDate;
+
+    if (selectedDay.startsWith('Today')) {
+        dayOfWeek = today.getDay();
+        selectedDate = today;
+    } else if (selectedDay.startsWith('Tomorrow')) {
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        dayOfWeek = tomorrow.getDay();
+        selectedDate = tomorrow;
+    } else {
+        selectedDate = new Date(selectedDay);
+        dayOfWeek = selectedDate.getDay();
+    }
+    
+    let availableTimeSlots;
+    
+    // Check if it's a weekday (0 is Sunday, 6 is Saturday)
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        availableTimeSlots = ['4 PM - 8 PM'];
+    } else {
+        availableTimeSlots = ['8 AM - 11 AM', '1 PM - 4 PM', '4 PM - 7 PM'];
+    }
+
+    return `
+        <select id="time-picker" style="width: 100%; padding: 10px; font-size: 16px;">
+            <option value="" disabled selected>Select pickup time</option>
+            ${availableTimeSlots.map(slot => `<option value="${slot}">${slot}</option>`).join('')}
+        </select>
+    `;
+}
     </script>
 </body>
 </html>

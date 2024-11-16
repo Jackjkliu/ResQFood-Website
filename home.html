@@ -7,623 +7,476 @@
     <title>ResQFood - Revolutionizing Food Rescue</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-        .user-menu {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1001;
-        }
-
-        .user-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #FF6F61;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 20px;
-            border: none;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .user-icon:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-        }
-
-        .dropdown-content {
-            position: absolute;
-            right: 0;
-            background-color: #ffffff;
-            min-width: 220px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 10px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .dropdown-content.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-content::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            right: 15px;
-            width: 10px;
-            height: 10px;
-            background-color: #ffffff;
-            transform: rotate(45deg);
-        }
-
-        .dropdown-content .user-email {
-            padding: 15px;
-            text-align: center;
-            background-color: #FF6F61;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .dropdown-content .sign-out {
-            color: #333;
-            padding: 15px;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .dropdown-content .sign-out:hover {
-            background-color: #f8f8f8;
-            color: #FF6F61;
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(2);
-                opacity: 0;
-            }
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(255,255,255,0.7);
-            width: 100%;
-            height: 100%;
-            animation: ripple 0.6s linear;
-        }
         :root {
-            --primary-color: #FF6F61;
-            --secondary-color: #2C3E50;
-            --accent-color: #3498DB;
-            --background-color: #F8F9FA;
-            --text-color: #333333;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .nav {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .nav.scrolled {
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        }
-        #login_modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
+    --primary-color: #FF6F61;
+    --secondary-color: #2C3E50;
+    --accent-color: #3498DB;
+    --background-color: #F8F9FA;
+    --text-color: #333333;
+    --font-size-base: clamp(16px, 2vw, 18px);
+    --font-size-heading: clamp(2rem, 5vw, 4.5rem);
+    --font-size-subheading: clamp(1.25rem, 3vw, 1.75rem);
+}
 
-        #login_modal #content_container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        .nav ul {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            list-style-type: none;
-            padding: 20px 0;
-        }
-        
-        .nav li {
-            margin: 0 20px;
-        }
-        #loginPopup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #FFE4E1; /* Light pink background */
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
-        z-index: 1000;
-        text-align: center;
-        font-family: 'Poppins', sans-serif;
-        max-width: 90%;
-        width: 300px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    overflow-x: hidden;
+}
+
+.container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Navigation */
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.nav.scrolled {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav ul {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    list-style-type: none;
+    padding: 1rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav li {
+    flex: 0 0 auto;
+    margin: 0 1rem;
+    white-space: nowrap;
+}
+
+.nav li a {
+    text-decoration: none;
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav li a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease;
+}
+
+.nav li a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 1rem 2rem;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(255,111,97,0.1) 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(44,62,80,0.1) 0%, transparent 30%);
+    z-index: -1;
+}
+
+.hero-content {
+    max-width: 1000px;
+}
+
+.logo {
+    width: clamp(150px, 30vw, 300px);
+    margin-bottom: clamp(-50px, -10vw, -100px);
+    animation: fadeInDown 1s ease-out, pulse 2s infinite alternate;
+    position: relative;
+    z-index: 10;
+}
+
+.heading {
+    font-size: var(--font-size-heading);
+    color: var(--secondary-color);
+    margin-top: clamp(60px, 10vw, 120px);
+    margin-bottom: 1rem;
+    font-weight: 700;
+    animation: fadeInUp 1s ease-out 0.5s both;
+    background: linear-gradient(45deg, #FF6B6B, #FF8E53, #FFA07A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+.subheading {
+    font-size: var(--font-size-subheading);
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    font-weight: 300;
+    animation: fadeInUp 1s ease-out 0.7s both;
+}
+
+.cta-button {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 30px);
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 1s ease-out 0.9s both;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Features Section */
+.section {
+    padding: clamp(60px, 10vw, 120px) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: clamp(20px, 4vw, 40px);
+    margin-top: clamp(30px, 5vw, 60px);
+}
+
+.feature-item {
+    background-color: #ffffff;
+    padding: clamp(20px, 4vw, 40px);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-icon {
+    font-size: clamp(36px, 6vw, 48px);
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.feature-title {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--secondary-color);
+}
+
+.feature-description {
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* User Menu */
+.user-menu {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1001;
+}
+
+.user-icon {
+    width: clamp(30px, 5vw, 40px);
+    height: clamp(30px, 5vw, 40px);
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: clamp(14px, 2.5vw, 20px);
+    border: none;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.user-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.dropdown-content {
+    position: absolute;
+    right: 0;
+    background-color: #ffffff;
+    min-width: 220px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.dropdown-content.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-content::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 15px;
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    transform: rotate(45deg);
+}
+
+.dropdown-content .user-email {
+    padding: 15px;
+    text-align: center;
+    background-color: #FF6F61;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Dashboard styles */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-item {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: clamp(30px, 5vw, 60px) 0;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.footer-logo {
+    width: clamp(80px, 15vw, 120px);
+    margin-bottom: 1rem;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+}
+
+.contact-icon {
+    font-size: clamp(18px, 3vw, 24px);
+}
+
+/* Login Popup */
+#loginPopup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(45deg, #FF6B6B, #FF8E53, #FFA07A);
+    padding: clamp(20px, 4vw, 30px);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
+    z-index: 1000;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    max-width: 90%;
+    width: clamp(280px, 90%, 300px);
+    color: white;
+}
+
+#loginPopup p {
+    font-size: clamp(16px, 3vw, 18px);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+#loginPopup button {
+    background-color: white;
+    color: #FF6F61;
+    border: none;
+    padding: clamp(8px, 2vw, 10px) clamp(16px, 4vw, 20px);
+    border-radius: 25px;
+    font-size: clamp(14px, 2.5vw, 16px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+#loginPopup button:hover {
+    background-color: #FFE4E1;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .nav ul {
+        justify-content: flex-start;
+        padding: 1rem 0.5rem;
+    }
+    
+    .nav li {
+        margin: 0 0.5rem;
+    }
+    
+    .heading {
+        font-size: clamp(36px, 8vw, 72px);
+    }
+    
+    .subheading {
+        font-size: clamp(18px, 4vw, 28px);
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
     }
 
-    #loginPopup p {
-        color: #FF6F61; /* Matching the primary color */
+    .user-menu {
+        top: auto;
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+    .user-icon {
+        width: 40px;
+        height: 40px;
         font-size: 18px;
-        margin-bottom: 20px;
-        font-weight: 600;
     }
 
-    #loginPopup button {
-        background-color: #FF6F61;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 25px;
+    .dropdown-content {
+        bottom: 100%;
+        top: auto;
+        margin-bottom: 10px;
+    }
+
+    .dropdown-content::before {
+        top: auto;
+        bottom: -5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav li a {
+        font-size: 14px;
+    }
+    
+    .logo {
+        width: 200px;
+        margin-bottom: -50px;
+    }
+    
+    .cta-button {
+        padding: 12px 24px;
         font-size: 16px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 600;
     }
 
-    #loginPopup button:hover {
-        background-color: #FF4C3B;
-        transform: translateY(-2px);
-        box-shadow: 0 2px 8px rgba(255, 111, 97, 0.5);
+    .user-menu {
+        bottom: 4rem;
+        right: 1rem;
     }
-        
-        .nav li a {
-            text-decoration: none;
-            color: var(--secondary-color);
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .nav li a::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--primary-color);
-            transform: scaleX(0);
-            transform-origin: bottom right;
-            transition: transform 0.3s ease;
-        }
-        
-        .nav li a:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-        
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(255,111,97,0.1) 0%, transparent 30%),
-                radial-gradient(circle at 80% 80%, rgba(44,62,80,0.1) 0%, transparent 30%);
-            z-index: -1;
-        }
-        
-        .hero-content {
-            max-width: 1000px;
-        }
-        
-        .logo {
-            width: 200px;
-            margin-bottom: 30px;
-            animation: fadeInDown 1s ease-out, pulse 2s infinite alternate;
-        }
-        
-        .heading {
-            font-size: 72px;
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-            font-weight: 700;
-            animation: fadeInUp 1s ease-out 0.5s both;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .subheading {
-            font-size: 28px;
-            color: var(--text-color);
-            margin-bottom: 40px;
-            font-weight: 300;
-            animation: fadeInUp 1s ease-out 0.7s both;
-        }
-        
-        .cta-button {
-            background-color: var(--primary-color);
-            color: #ffffff;
-            border: none;
-            border-radius: 30px;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin: 10px;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            animation: fadeInUp 1s ease-out 0.9s both;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            transition: all 0.6s;
-        }
-        
-        .cta-button:hover::before {
-            left: 100%;
-        }
-        
-        .cta-button:hover {
-            background-color: #FF4C3B;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .app-showcase {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-top: 80px;
-            perspective: 1000px;
-        }
-        
-        .app-screenshot {
-            width: 250px;
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            animation: floatUpDown 3s ease-in-out infinite;
-            transform: rotateY(10deg);
-        }
-        
-        .app-screenshot:nth-child(2) {
-            animation-delay: 0.5s;
-        }
-        
-        .app-screenshot:nth-child(3) {
-            animation-delay: 1s;
-        }
-        
-        .app-screenshot:hover {
-            transform: rotateY(0deg) scale(1.05) translateY(-10px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-        }
-        
-        .section {
-            padding: 120px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 10% 10%, rgba(255,111,97,0.05) 0%, transparent 30%),
-                radial-gradient(circle at 90% 90%, rgba(44,62,80,0.05) 0%, transparent 30%);
-            z-index: -1;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-        
-        .feature-item {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature-item::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,111,97,0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: all 0.6s ease;
-        }
-        
-        .feature-item:hover::before {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-        
-        .feature-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            font-size: 48px;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-item:hover .feature-icon {
-            transform: scale(1.2);
-        }
-        
-        .feature-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--secondary-color);
-        }
-        
-        .feature-description {
-            font-size: 16px;
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-        
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes floatUpDown {
-            0%, 100% {
-                transform: translateY(0) rotateY(10deg);
-            }
-            50% {
-                transform: translateY(-15px) rotateY(10deg);
-            }
-        }
-        
-        @keyframes pulse {
-            from {
-                transform: scale(1);
-            }
-            to {
-                transform: scale(1.05);
-            }
-        }
-        
-        .stats-section {
-            background-color: var(--secondary-color);
-            color: #ffffff;
-            padding: 80px 0;
-            text-align: center;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-        
-        .stat-item {
-            animation: fadeInUp 1s ease-out both;
-        }
-        
-        .stat-number {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-        
-        .stat-label {
-            font-size: 18px;
-            font-weight: 300;
-        }
-        
-        .testimonial-section {
-            background-color: #ffffff;
-            padding: 100px 0;
-        }
-        
-        .testimonial-carousel {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            gap: 30px;
-            padding: 20px 0;
-        }
-        
-        .testimonial-carousel::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .testimonial-item {
-            flex: 0 0 auto;
-            width: 400px;
-            background-color: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            scroll-snap-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .testimonial-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .testimonial-content {
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        
-        .testimonial-author {
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-        
-        .footer {
-            background-color: var(--secondary-color);
-            color: #ffffff;
-            padding: 60px 0;
-            text-align: center;
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .footer-logo {
-            width: 120px;
-        }
-        
-        .footer-links {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .footer-link {
-            color: #ffffff;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-link:hover {
-            color: var(--primary-color);
-        }
-        
-        .social-icons {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .social-icon {
-            color: #ffffff;
-            font-size: 24px;
-            transition: color 0.3s ease;
-        }
-        
-        .social-icon:hover {
-            color: var(--primary-color);
-        }
+
+   
+
+
     </style>
 </head>
 <body>
@@ -646,27 +499,24 @@
         <ul>
 
                 <li><a href="#">Home</a></li>
-            <li><a href="#">How It Works</a></li>
-            <li><a href="#">About Us</a></li>
+           
+            
            <li><a href="#" onclick="checkLoginForDonation(event)">Post Donation</a></li>
             <li><a href="page5.html">Find Nearest Pantry</a></li>
             <li><a href="login.html">Login</a></li>
+            <li><a href="how.html">How It Works</a></li>
+            <li><a href="about.html">About Us</a></li>
         </ul>
     </nav>
     
     <section class="hero">
         <div class="hero-content">
-            <img src="https://i.postimg.cc/JzN99BS6/LIMITED-TIME-ONLY-3.png" class="logo" alt="ResQFood Logo">
+            <img src="https://i.postimg.cc/QMX8fkVk/Full-Logo-No-Buffer-removebg-preview.png" class="logo" alt="ResQFood Logo">
             <h1 class="heading">Revolutionizing Food Rescue</h1>
             <h2 class="subheading">Connect, Donate, and Transform Communities with ResQFood</h2>
-            <a href="#" class="cta-button">Download on App Store</a>
-            <a href="#" class="cta-button">Get it on Google Play</a>
             
-            <div class="app-showcase">
-                <img src="/api/placeholder/250/500" alt="App Screenshot 1" class="app-screenshot">
-                <img src="/api/placeholder/250/500" alt="App Screenshot 2" class="app-screenshot">
-                <img src="/api/placeholder/250/500" alt="App Screenshot 3" class="app-screenshot">
-               
+            
+          
             </div>
         </div>
     </section>
@@ -694,45 +544,9 @@
         </div>
     </section>
 
-    <section class="stats-section">
-        <div class="container">
-            <h2 class="heading" style="color: #ffffff;">Our Impact</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number" id="meals-served">0</div>
-                    <div class="stat-label">Meals Served</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="food-rescued">0</div>
-                    <div class="stat-label">Pounds of Food Rescued</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="carbon-reduced">0</div>
-                    <div class="stat-label">Tons of CO2 Reduced</div>
-                </div>
-            </div>
-        </div>
-    </section>
+   
 
-    <section class="testimonial-section">
-        <div class="container">
-            <h2 class="heading">What Our Users Say</h2>
-            <div class="testimonial-carousel">
-                <div class="testimonial-item">
-                    <p class="testimonial-content">"ResQFood has made it incredibly easy for our restaurant to donate excess food. We're reducing waste and helping our community at the same time!"</p>
-                    <p class="testimonial-author">- Sarah J., Restaurant Owner</p>
-                </div>
-                <div class="testimonial-item">
-                    <p class="testimonial-content">"As a food bank coordinator, ResQFood has streamlined our donation process. We're reaching more donors and serving more people in need."</p>
-                    <p class="testimonial-author">- Michael T., Food Bank Coordinator</p>
-                </div>
-                <div class="testimonial-item">
-                    <p class="testimonial-content">"I love how ResQFood connects me with local food banks. It's so rewarding to know my excess food is going to those who need it most."</p>
-                    <p class="testimonial-author">- Emily R., Home Cook</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    
 
     <section class="cta-section section">
         <div class="container">
@@ -741,23 +555,26 @@
             <a href="#" class="cta-button">Get Started Now</a>
         </div>
     </section>
-
+    
     <footer class="footer">
-        <div class="container footer-content">
-            <img src="https://i.postimg.cc/JzN99BS6/LIMITED-TIME-ONLY-3.png" alt="ResQFood Logo" class="footer-logo">
-            <div class="footer-links">
-                <a href="#" class="footer-link">Privacy Policy</a>
-                <a href="#" class="footer-link">Terms of Service</a>
-                <a href="#" class="footer-link">Contact Us</a>
-            </div>
-            <div class="social-icons">
-                <a href="#" class="social-icon">📘</a>
-                <a href="#" class="social-icon">🐦</a>
-                <a href="#" class="social-icon">📸</a>
-                <a href="#" class="social-icon">🔗</a>
-            </div>
+    <div class="container footer-content">
+        <img src="https://i.postimg.cc/2y1gH34x/Full-Logo-No-Buffer.png" alt="ResQFood Logo" class="footer-logo">
+        <div class="contact-info">
+            <a href="https://www.instagram.com/direct/t/resqfood1" target="_blank" rel="noopener noreferrer" class="contact-item">
+                <i class="fab fa-instagram contact-icon"></i>
+                <span>@resqfood1</span>
+            </a>
+            <a href="mailto:veeragarwal45@gmail.com" class="contact-item">
+                <i class="far fa-envelope contact-icon"></i>
+                <span>veeragarwal45@gmail.com</span>
+            </a>
+            <a href="tel:+19739740346" class="contact-item">
+                <i class="fas fa-phone-alt contact-icon"></i>
+                <span>(973) 974-0346</span>
+            </a>
         </div>
-    </footer>
+    </div>
+</footer>
 
     <script>
         function checkLoginForDonation(event) {

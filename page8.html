@@ -1,43 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're a Hero - ResQFood</title>
   <style>
-    body {
-      background-color: #f1f1f1;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    
+    body, html {
       margin: 0;
       padding: 0;
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
       display: flex;
-      align-items: center;
       justify-content: center;
-      height: 100vh;
-      font-family: Arial, sans-serif;
+      align-items: center;
+    }
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .back-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    
+    .back-button svg {
+      width: 24px;
+      height: 24px;
+      fill: #FF6F61;
     }
     .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      padding: 50px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 550px;
+      width: 90%;
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
+      position: relative;
+      overflow: hidden;
     }
-    .logo {
-      width: 1000px;
+    
+    .container::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+      transform: rotate(45deg);
+      z-index: -1;
     }
-    .heading {
-      font-size: 36px;
+    .content {
+      position: relative;
+      padding: 30px 0;
+      margin: 30px 0;
+    }
+    .content::before, .content::after {
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(to right, transparent, #FF6F61, transparent);
+    }
+    .content::before { top: 0; }
+    .content::after { bottom: 0; }
+    .hero-message {
+      font-size: 48px;
       color: #FF6F61;
-      margin-bottom: 10px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .pickup-icon {
+      width: 120px;
+      margin: 30px 0;
+    }
+    .caption {
+      font-size: 28px;
+      color: #FF6F61;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      font-weight: 600;
     }
     .subheading {
       font-size: 20px;
-      color: #555555;
-      margin-bottom: 20px;
+      color: #000000;
+      margin-bottom: 0;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+    @media (max-width: 480px) {
+      .container { padding: 40px 30px; }
+      .hero-message { font-size: 36px; }
+      .pickup-icon { width: 90px; }
+      .caption { font-size: 24px; }
+      .subheading { font-size: 18px; }
     }
   </style>
 </head>
 <body>
-
-      <img src="https://i.postimg.cc/cC15jYS0/LIMITED-TIME-ONLY-5.png" class="logo" alt="ResQFood Logo">
+  <div class="back-button" onclick="window.location.href='home.html'">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M0 0h24v24H0z" fill="none"/>
+      <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    </svg>
+  </div>
+  <div class="container">
+    <div class="content">
+      <div class="hero-message">You are a hero!</div>
+      <img src="https://i.postimg.cc/MZCL9C8w/food-pickup.png" class="pickup-icon" alt="Food Pickup Icon">
+      <p class="caption">Thanks for your donation! A ResQFood driver will contact you promptly</p>
+      <p class="subheading"></p>
     </div>
   </div>
 </body>

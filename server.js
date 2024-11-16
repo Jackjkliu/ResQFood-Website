@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = 3005;
+const port = 3003;
 
 // Firebase configuration
 const firebaseConfig = {
@@ -69,32 +69,37 @@ app.post('/signin', async (req, res) => {
   }
 });
 
-// Handle form submission and send SMS
 app.post('/send-sms', async (req, res) => {
-  const adminPhoneNumber = process.env.PHONENUMBER || "+1(973)-974-0346";
-  const userPhoneNumber = req.body.phoneNumber;
-  const message = req.body.message;
+  const adminPhoneNumber = "+12016872707";  // Always send to this number
+  const selectedProducts = req.body.selectedProducts || [];
+
+  // Construct the message with selected products
+  const message = `
+  New donation from ${req.body.firstName} ${req.body.lastName}. 
+  Phone: ${req.body.phoneNumber}
+  Address: ${req.body.address}
+  Product Type(s): ${selectedProducts.join(', ')}
+  Weight: ${req.body.weight} lbs
+  Pickup Window: ${req.body.pickupDay}, ${req.body.pickupTime}
+  `.trim();
 
   console.log("Received message:", message);
+  console.log("Selected products:", selectedProducts);
 
-  const customerId = process.env.CUSTOMER_ID || "92579235-DA25-43A5-973C-DB34527C1CB8";
-  const apiKey = process.env.API_KEY || "sI9rdbUMptHpZMwwBlMB38wtm0yuQxDrLpiuGgBR/wqUGCGrPZMglr4WRom1tp8R+fGrJtBNblhGqekirTwg0Q==";
+  const customerId = process.env.CUSTOMER_ID || "A8289DFD-EC30-453C-A8F9-487A7B898B6A";
+  const apiKey = process.env.API_KEY || "n/nmsjXXnyO7XDr+IEvs1CqSjujditwQF7BS5VX7Lm1WtCw4eC6ovZWE3/rxrvwbc7FpP5H5Uq9s1IsyIAcYlA==";
   const messageType = "ARN";
 
   const client = new TeleSignSDK(customerId, apiKey);
 
   try {
-    // Send SMS to admin
+    // Send SMS only to admin number
     await sendSMS(client, adminPhoneNumber, message, messageType);
 
-    // Send SMS to user
-    const userMessage = "Thank you for your donation. We'll be in touch soon to arrange pickup.";
-    await sendSMS(client, userPhoneNumber, userMessage, messageType);
-
-    res.redirect('/page8.html');
+    res.json({ success: true, message: "SMS sent successfully" });
   } catch (error) {
     console.error("Unable to send SMS. Error:", error);
-    res.status(500).send("Failed to send SMS. Please try again.");
+    res.status(500).json({ success: false, message: "Failed to send SMS" });
   }
 });
 

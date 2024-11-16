@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResQFood - Login & Register</title>
+    <title>ResQFood - Email Authentication</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-auth-compat.js"></script>
     <style>
-            :root {
+        :root {
             --primary-color: #FF6F61;
             --secondary-color: #2C3E50;
             --accent-color: #3498DB;
             --background-color: #F8F9FA;
             --text-color: #333333;
         }
-
 
         * {
             margin: 0;
@@ -24,16 +23,16 @@
             font-family: 'Poppins', sans-serif;
         }
 
-
         body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #FF6B6B, #FF8080, #FFA5A5);
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            overflow: hidden;
         }
-
 
         .container {
             background-color: rgba(255, 255, 255, 0.9);
@@ -41,17 +40,16 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             width: 400px;
-            max-width: 100%;
-            padding: 40px;
+            max-width: 90%;
+            padding: 60px 40px 40px; /* Increased top padding */
             transition: all 0.3s ease;
+            position: relative;
         }
-
 
         .container:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
-
 
         .form-title {
             color: var(--secondary-color);
@@ -61,12 +59,38 @@
             font-weight: 700;
         }
 
-
         .input-group {
             position: relative;
             margin-bottom: 30px;
         }
 
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .back-button svg {
+            width: 24px;
+            height: 24px;
+            fill: #FF0000;
+        }
 
         .input-group input {
             width: 100%;
@@ -81,12 +105,10 @@
             border-bottom: 2px solid var(--accent-color);
         }
 
-
         .input-group input:focus {
             background: rgba(255, 255, 255, 1);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-
 
         .input-group i {
             position: absolute;
@@ -98,11 +120,9 @@
             transition: all 0.3s ease;
         }
 
-
         .input-group input:focus + i {
             color: var(--primary-color);
         }
-
 
         .btn {
             width: 100%;
@@ -118,70 +138,21 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-
         .btn:hover {
             background: var(--accent-color);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
-
-
-        .or {
-            text-align: center;
-            font-size: 18px;
-            color: var(--secondary-color);
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-        }
-
-
-        .or::before,
-        .or::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--secondary-color);
-        }
-
-
-        .or span {
-            padding: 0 10px;
-        }
-
-
-        .icons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-
-        .icons i {
-            font-size: 24px;
-            color: var(--secondary-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-
-        .icons i:hover {
-            color: var(--primary-color);
-            transform: scale(1.2);
-        }
-
 
         .links {
             text-align: center;
             margin-top: 20px;
         }
 
-
         .links p {
             margin-bottom: 10px;
             color: var(--secondary-color);
         }
-
 
         .links button {
             background: none;
@@ -192,32 +163,10 @@
             transition: all 0.3s ease;
         }
 
-
         .links button:hover {
             color: var(--accent-color);
             text-decoration: underline;
         }
-
-
-        .recover {
-            text-align: right;
-            margin-bottom: 20px;
-        }
-
-
-        .recover a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-
-        .recover a:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
-
 
         .messageDiv {
             background: rgba(255, 255, 255, 0.8);
@@ -229,17 +178,14 @@
             transition: all 0.3s ease;
         }
 
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-
         .container {
             animation: fadeIn 0.5s ease-out;
         }
-
 
         .loading-overlay {
             position: fixed;
@@ -257,12 +203,10 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-
         .loading-overlay.active {
             opacity: 1;
             visibility: visible;
         }
-
 
         .loading-spinner {
             width: 50px;
@@ -273,19 +217,24 @@
             animation: spin 1s linear infinite;
         }
 
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
     </style>
 </head>
 <body>
-    <div id="loadingOverlay" class="loading-overlay">
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
-    <div class="container" id="signup" style="display:none;">
+
+    <div class="container" id="signup">
+        <div class="back-button" onclick="window.location.href='home.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </div>
         <h1 class="form-title">Register</h1>
         <form id="signupForm">
             <div id="signUpMessage" class="messageDiv" style="display:none;"></div>
@@ -298,7 +247,7 @@
                 <i class="fas fa-user"></i>
             </div>
             <div class="input-group">
-                <input type="email" name="email" id="Email" placeholder="Email" required>
+                <input type="email" name="email" id="email" placeholder="Email" required>
                 <i class="fas fa-envelope"></i>
             </div>
             <div class="input-group">
@@ -307,48 +256,40 @@
             </div>
             <button type="submit" class="btn" id="submitSignUp">Sign Up</button>
         </form>
-        <div class="or"><span>or</span></div>
-        <div class="icons">
-            <i class="fab fa-google" id="googleSignUp"></i>
-            <i class="fab fa-facebook" id="facebookSignUp"></i>
-        </div>
         <div class="links">
             <p>Already Have Account?</p>
             <button id="signInButton">Sign In</button>
         </div>
     </div>
 
-    <div class="container" id="signIn">
+    <div class="container" id="signIn" style="display:none;">
+        <div class="back-button" onclick="window.location.href='home.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </div>
         <h1 class="form-title">Sign In</h1>
         <form id="signinForm">
             <div id="signInMessage" class="messageDiv" style="display:none;"></div>
             <div class="input-group">
-                <input type="email" name="email" id="signinEmail" placeholder="Email" required>
+                <input type="email" name="signinEmail" id="signinEmail" placeholder="Email" required>
                 <i class="fas fa-envelope"></i>
             </div>
             <div class="input-group">
-                <input type="password" name="password" id="signinPassword" placeholder="Password" required>
+                <input type="password" name="signinPassword" id="signinPassword" placeholder="Password" required>
                 <i class="fas fa-lock"></i>
             </div>
-            <p class="recover">
-                <a href="#">Recover Password</a>
-            </p>
             <button type="submit" class="btn" id="submitSignIn">Sign In</button>
         </form>
-        <div class="or"><span>or</span></div>
-        <div class="icons">
-            <i class="fab fa-google" id="googleSignIn"></i>
-            <i class="fab fa-facebook" id="facebookSignIn"></i>
-        </div>
         <div class="links">
             <p>Don't have account yet?</p>
             <button id="signUpButton">Sign Up</button>
         </div>
     </div>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, getRedirectResult, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-        
+
+    <script>
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCPUD1sfg-ujtI0B3sYY4UEYSn-PR0_Ha4",
             authDomain: "resqfood-27b66.firebaseapp.com",
@@ -358,34 +299,33 @@
             appId: "1:14549140894:web:2f3e3087f0e8ee7122c28f",
             measurementId: "G-5R1EX99K6J"
         };
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const googleProvider = new GoogleAuthProvider();
-        const facebookProvider = new FacebookAuthProvider();
-        
+    
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    
         function showMessage(elementId, message, isError = false) {
             const messageDiv = document.getElementById(elementId);
             messageDiv.textContent = message;
             messageDiv.style.display = 'block';
-            messageDiv.style.color = isError ? '#FF6F61' : '#4CAF50';
-            messageDiv.style.backgroundColor = isError ? '#FFEBEE' : '#E8F5E9';
-            messageDiv.style.border = `1px solid ${isError ? '#FF6F61' : '#4CAF50'}`;
-            messageDiv.style.borderRadius = '5px';
-            messageDiv.style.padding = '10px';
             setTimeout(() => {
                 messageDiv.style.display = 'none';
             }, 5000);
         }
-        
+    
+        function switchToSignIn() {
+            document.getElementById('signup').style.display = 'none';
+            document.getElementById('signIn').style.display = 'block';
+        }
+    
+        function switchToSignUp() {
+            document.getElementById('signIn').style.display = 'none';
+            document.getElementById('signup').style.display = 'block';
+        }
+    
         function showLoadingOverlay() {
             document.getElementById('loadingOverlay').classList.add('active');
         }
-        
-        function hideLoadingOverlay() {
-            document.getElementById('loadingOverlay').classList.remove('active');
-        }
-        
+    
         function redirectToHome(email) {
             showLoadingOverlay();
             const firstLetter = email.charAt(0).toUpperCase();
@@ -395,117 +335,46 @@
                 window.location.href = 'home.html';
             }, 500);
         }
-        
-        function switchToSignIn() {
-            document.getElementById('signup').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('signup').style.display = 'none';
-                document.getElementById('signIn').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('signIn').style.opacity = '1';
-                }, 50);
-            }, 300);
-        }
-        
-        function switchToSignUp() {
-            document.getElementById('signIn').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('signIn').style.display = 'none';
-                document.getElementById('signup').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('signup').style.opacity = '1';
-                }, 50);
-            }, 300);
-        }
-        
-        function signInWithGoogle() {
-            signInWithPopup(auth, googleProvider)
-              .then((result) => {
-                  const user = result.user;
-                  showMessage('signInMessage', "Google Sign-in Successful!");
-                  redirectToHome(user.email);
-              }).catch((error) => {
-                  showMessage('signInMessage', "Error: " + error.message, true);
-              });
-        }
-        
-        function signInWithFacebook() {
-            signInWithPopup(auth, facebookProvider)
-              .then((result) => {
-                  const user = result.user;
-                  showMessage('signInMessage', "Facebook Sign-in Successful!");
-                  redirectToHome(user.email);
-              }).catch((error) => {
-                  showMessage('signInMessage', "Error: " + error.message, true);
-              });
-        }
-        
+    
         document.getElementById('signupForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            var firstname = document.getElementById("firstname").value;
-            var lastname = document.getElementById("lastname").value;
-            var email = document.getElementById("Email").value;
-            var password = document.getElementById("password").value;
-        
-            createUserWithEmailAndPassword(auth, email, password)
-            .then(function(userCredential) {
-                showMessage('signUpMessage', "Signup Successful! Please sign in.");
-                switchToSignIn();
-            })
-            .catch(function(error) {
-                showMessage('signUpMessage', "Error: " + error.message, true);
-            });
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Send verification email
+                    return userCredential.user.sendEmailVerification();
+                })
+                .then(() => {
+                    showMessage('signUpMessage', "Registration successful! Please check your email for verification.");
+                    switchToSignIn();
+                })
+                .catch((error) => {
+                    showMessage('signUpMessage', "Error: " + error.message, true);
+                });
         });
-        
+    
         document.getElementById('signinForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            var email = document.getElementById("signinEmail").value;
-            var password = document.getElementById("signinPassword").value;
-        
-            signInWithEmailAndPassword(auth, email, password)
-            .then(function(userCredential) {
-                showMessage('signInMessage', "Signin Successful!");
-                redirectToHome(email);
-            })
-            .catch(function(error) {
-                showMessage('signInMessage', "Error: " + error.message, true);
-            });
+            const email = document.getElementById("signinEmail").value;
+            const password = document.getElementById("signinPassword").value;
+            
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    if (userCredential.user.emailVerified) {
+                        showMessage('signInMessage', "Sign-in Successful!");
+                        redirectToHome(email);
+                    } else {
+                        showMessage('signInMessage', "Please verify your email before signing in. A link has been sent to your email.", true);
+                        firebase.auth().signOut();
+                    }
+                })
+                .catch((error) => {
+                    showMessage('signInMessage', "Error: " + error.message, true);
+                });
         });
-        
-        // Add event listeners for switching between forms
+    
         document.getElementById('signInButton').addEventListener('click', switchToSignIn);
         document.getElementById('signUpButton').addEventListener('click', switchToSignUp);
-        
-        // Add event listeners for Google sign-in
-        document.getElementById('googleSignUp').addEventListener('click', signInWithGoogle);
-        document.getElementById('googleSignIn').addEventListener('click', signInWithGoogle);
-        
-        // Add event listeners for Facebook sign-in
-        document.getElementById('facebookSignUp').addEventListener('click', signInWithFacebook);
-        document.getElementById('facebookSignIn').addEventListener('click', signInWithFacebook);
-        
-        // Check for redirect result
-        getRedirectResult(auth)
-          .then((result) => {
-            if (result) {
-              const user = result.user;
-              showMessage('signInMessage', "Sign-in Successful!");
-              redirectToHome(user.email);
-            }
-          }).catch((error) => {
-            showMessage('signInMessage', "Error: " + error.message, true);
-          });
-        
-        function signOutUser() {
-            signOut(auth).then(() => {
-                showMessage('signOutMessage', "Sign-out successful.");
-            }).catch((error) => {
-                showMessage('signOutMessage', "Error: " + error.message, true);
-            });
-        }
-        
-        // You can add a sign out button and attach this function to it
-        // document.getElementById('signOutButton').addEventListener('click', signOutUser);
-      </script>
-  </body>
-  </html>
+    </script>
