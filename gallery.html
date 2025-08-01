@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResQFood - Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --primary-color: #FF6F61;
+            --secondary-color: #2C3E50;
+            --accent-color: #3498DB;
+            --background-color: #F8F9FA;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav ul {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            list-style-type: none;
+            padding: 1rem 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav li {
+            flex: 0 0 auto;
+            margin: 0 1rem;
+            white-space: nowrap;
+        }
+
+        .nav li a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav li a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav li a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .gallery-header {
+            padding: 80px 0 60px;
+            text-align: center;
+            background: linear-gradient(45deg, rgba(255,111,97,0.1), rgba(44,62,80,0.1));
+        }
+
+        .gallery-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gallery-description {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .gallery-filter {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0 40px;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+
+        .filter-button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: white;
+            color: var(--secondary-color);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-button:hover,
+        .filter-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .gallery-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            background-color: #f8f9fa;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.3s ease;
+            display: block;
+            background-color: #f0f0f0;
+        }
+
+        .gallery-item img:not([src]) {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><text x="50" y="50" text-anchor="middle" dy=".3em" fill="%23999" font-family="Arial" font-size="12">Loading...</text></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .gallery-item img.loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .gallery-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 1001;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            margin: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .modal-caption {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Login Popup */
+        #loginPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53, #FFA07A);
+            padding: clamp(20px, 4vw, 30px);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
+            z-index: 1000;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            max-width: 90%;
+            width: clamp(280px, 90%, 300px);
+            color: white;
+        }
+
+        #loginPopup p {
+            font-size: clamp(16px, 3vw, 18px);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        #loginPopup button {
+            background-color: white;
+            color: #FF6F61;
+            border: none;
+            padding: clamp(8px, 2vw, 10px) clamp(16px, 4vw, 20px);
+            border-radius: 25px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        #loginPopup button:hover {
+            background-color: #FFE4E1;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .nav ul {
+                justify-content: flex-start;
+                padding: 1rem 0.5rem;
+            }
+           
+            .nav li {
+                margin: 0 0.5rem;
+            }
+
+            .gallery-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+                padding: 0 15px;
+            }
+
+            .gallery-filter {
+                gap: 10px;
+            }
+
+            .filter-button {
+                padding: 6px 15px;
+                font-size: 0.9rem;
+            }
+
+            .gallery-item img {
+                height: 200px;
+            }
+
+            .gallery-item {
+                min-height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav li a {
+                font-size: 14px;
+            }
+
+            .gallery-item img {
+                height: 180px;
+            }
+
+            .gallery-item {
+                min-height: 180px;
+            }
+
+            .gallery-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        /* Floating Login Button */
+        .floating-login {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, #FF6F61, #FF8E53);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .floating-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 111, 97, 0.4);
+            background: linear-gradient(135deg, #FF5A4A, #FF7A43);
+        }
+
+        .floating-login i {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .floating-login {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.8rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <div id="loginPopup">
+        <p>Feature available for logged in users only.</p>
+        <button onclick="closeLoginPopup()">Close</button>
+    </div>
+
+    <nav class="nav">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="partners.html">Our Partners</a></li>
+            <li><a href="how.html">How It Works</a></li>
+            <li><a href="page5.html">Find Nearest Pantry</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="donations.html">View Donations</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <header class="gallery-header">
+        <h1 class="gallery-title">Our Impact in Pictures</h1>
+        <p class="gallery-description">Witness the journey of food rescue and community transformation through our lens.</p>
+    </header>
+
+    <div class="gallery-filter">
+        <button class="filter-button active" data-filter="all">All</button>
+        <button class="filter-button" data-filter="donations">Donations</button>
+        <button class="filter-button" data-filter="events">Events</button>
+        <button class="filter-button" data-filter="impact">Impact</button>
+        <button class="filter-button" data-filter="volunteers">Volunteers</button>
+        <button class="filter-button" data-filter="chapter-leaders">Chapter Leaders</button>
+    </div>
+
+    <div class="gallery-container">
+        <!-- North Jersey News feature-->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/J79zfrxz/image.png" alt="North Jersey News feature">
+            <div class="gallery-overlay">
+                <h3>North Jersey News feature</h3>
+                <p>7/29/25</p>
+            </div>
+        </div>
+        <!-- Route 10 Farmer's Market Partnership-->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/N0gh3VZM/image.png" alt="Route 10 Farmer's Market Partnership">
+            <div class="gallery-overlay">
+                <h3>Route 10 Farmer's Market Partnership</h3>
+                <p>7/25/25</p>
+            </div>
+        </div>
+        <!-- Basking Ridge Chapter Launch + First Pickup @ Panera -->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/pXFtzKD2/image.png" alt="Basking Ridge Chapter Launch + First Pickup @ Panera">
+            <div class="gallery-overlay">
+                <h3>Basking Ridge Chapter Launch + First Pickup @ Panera</h3>
+                <p>7/3/25</p>
+            </div>
+        </div>
+        <!-- MEND Partnership-->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/bYFzQzWR/image.png" alt="MEND Partnership">
+            <div class="gallery-overlay">
+                <h3>MEND Partnership</h3>
+                <p>6/26/25</p>
+            </div>
+        </div>
+        <!-- $100,000 Milestone-->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/Nf5jVymV/image.png" alt="$100,000 Milestone">
+            <div class="gallery-overlay">
+                <h3>$100,000 Milestone</h3>
+                <p>6/20/25</p>
+            </div>
+        </div>
+        <!-- 300 Donation Milestone-->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/FKcf6f5m/image.png" alt="300 Donation Milestone">
+            <div class="gallery-overlay">
+                <h3>300 Donation Milestone</h3>
+                <p>6/20/25</p>
+            </div>
+        </div>
+        <!-- Malboro/Monmouth County chapter Launch-->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/gJVZxxN4/image.png" alt="Malboro/Monmouth County chapter Launch">
+            <div class="gallery-overlay">
+                <h3>Malboro/Monmouth County Chapter Launch</h3>
+                <p>5/30/25</p>
+            </div>
+        </div>
+        <!-- 250 Donation Milestone-->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/SxktR9d1/image.png" alt="250 Donation Milestone">
+            <div class="gallery-overlay">
+                <h3>250 Donation Milestone</h3>
+                <p>5/23/25</p>
+            </div>
+        </div>
+        <!-- NJ News 12 Segment-->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/PxjH5JLt/image.png" alt="NJ News 12 Segment">
+            <div class="gallery-overlay">
+                <h3>ResQFood on NJ News 12</h3>
+                <p>5/2/25</p>
+            </div>
+        </div>
+        <!-- 200 Donation Milestone-->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/0QY8YDgM/image.png" alt="200 Donation Milestone">
+            <div class="gallery-overlay">
+                <h3>200 Donation Milestone</h3>
+                <p>4/11/25</p>
+            </div>
+        </div>
+        <!-- Edison Chapter Launch + First Pickup @ Panera-->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/xChKmr2T/Screenshot-2025-07-31-184642.png" alt="Edison Chapter Launch + First Pickup @ Panera">
+            <div class="gallery-overlay">
+                <h3>Edison Chapter Launch + First Pickup @ Panera</h3>
+                <p>4/5/25</p>
+            </div>
+        </div>
+        <!-- $50,000 Milestone-->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/x123gSbX/Screenshot-2025-07-31-184521.png" alt="$50,000 Milestone">
+            <div class="gallery-overlay">
+                <h3>$50,000 Milestone</h3>
+                <p>4/2/25</p>
+            </div>
+        </div>
+        <!-- 150 Donation Milestone-->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/R0G6ckcx/image.png" alt="150 Donation Milestone">
+            <div class="gallery-overlay">
+                <h3>150 Donation Milestone</h3>
+                <p>4/1/25</p>
+            </div>
+        </div>
+        <!-- Parsippany Panera Bread Partnership-->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/Jn4Xvr1h/image.png" alt="Parsippany Panera Bread Partnership">
+            <div class="gallery-overlay">
+                <h3>Parsippany Panera Bread Partnership</h3>
+                <p>3/9/25</p>
+            </div>
+        </div>
+        <!-- Jersey City First Pickup-->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/yN6WYL2Q/image.png" alt="Jersey City First Pickup">
+            <div class="gallery-overlay">
+                <h3>Jersey City Chapter and First Pickup @ Panera</h3>
+                <p>2/20/25</p>
+            </div>
+        </div>
+        <!-- 100 Donation Milestone-->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/pX9Tm9Gv/Screenshot-2025-07-31-183918.png" alt="100 Donation Milestone">
+            <div class="gallery-overlay">
+                <h3>100 Donation Milestone</h3>
+                <p>2/20/25</p>
+            </div>
+        </div> 
+        <!-- Livingston Town Council Recognition 2/10/25 -->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/7Lrf8xNk/Screenshot-2025-07-31-183804.png" alt="Livingston Town Council Recognition">
+            <div class="gallery-overlay">
+                <h3>Livingston Town Council Recognition</h3>
+                <p>2/10/25</p>
+            </div>
+        </div>
+        <!-- LivBreads Partnership 2/8/25-->
+         <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/Fshpm4D0/Screenshot-2025-07-31-183417.png" alt="Gold PVSA Award">
+            <div class="gallery-overlay">
+                <h3>LivBreads Partnership</h3>
+                <p>2/8/25</p>
+            </div>
+        </div>
+         
+       <!-- First Millburn Pickup 2/1/25--> 
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/RFfdCCkL/Screenshot-2025-07-31-183242.png" alt="Gold PVSA Award">
+            <div class="gallery-overlay">
+                <h3>Millburn Chapter First Pickup @ Panera</h3>
+                <p>2/1/25</p>
+            </div>
+        </div>
+
+        <!-- Gold PVSA Award - 1/27/25 -->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/BnXv1jms/Screenshot-2025-07-31-182027.png" alt="Gold PVSA Award">
+            <div class="gallery-overlay">
+                <h3>Gold PVSA Award</h3>
+                <p>1/27/25</p>
+            </div>
+        </div>
+
+        <!-- Godfathers partnership - 1/26/25 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/MpWFsBC2/Screenshot-2025-07-31-183129.png" alt="Godfathers partnership">
+            <div class="gallery-overlay">
+                <h3>Godfathers partnership</h3>
+                <p>1/26/25</p>
+            </div>
+        </div>
+
+        <!-- 50 donations milestone - 1/16/25 -->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/vHwjVkXm/Screenshot-2025-07-31-183049.png" alt="50 donations milestone">
+            <div class="gallery-overlay">
+                <h3>50 donations milestone</h3>
+                <p>1/16/25</p>
+            </div>
+        </div>
+
+        <!-- 7 eleven partnership - 1/3/25 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/KzdWQH2J/Screenshot-2025-07-31-183013.png" alt="7 eleven partnership">
+            <div class="gallery-overlay">
+                <h3>7 eleven partnership</h3>
+                <p>1/3/25</p>
+            </div>
+        </div>
+
+        <!-- West Essex Tribune feature - 12/23/24 -->
+        <div class="gallery-item" data-category="impact">
+            <img src="https://i.postimg.cc/xjNDHK26/Screenshot-2025-07-31-182933.png" alt="West Essex Tribune feature">
+            <div class="gallery-overlay">
+                <h3>West Essex Tribune feature</h3>
+                <p>12/23/24</p>
+            </div>
+        </div>
+
+        <!-- Bubbakoos Burritos partnership - 12/6/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/PxPGSD8r/Screenshot-2025-07-31-182854.png" alt="Bubbakoos Burritos partnership">
+            <div class="gallery-overlay">
+                <h3>Bubbakoos Burritos partnership</h3>
+                <p>12/6/24</p>
+            </div>
+        </div>
+
+        <!-- Viva Guacamole partnership - 12/1/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/MHC9bM14/Screenshot-2025-07-31-182750.png" alt="Viva Guacamole partnership">
+            <div class="gallery-overlay">
+                <h3>Viva Guacamole partnership</h3>
+                <p>12/1/24</p>
+            </div>
+        </div>
+
+        <!-- Seymours Cafe partnership - 11/23/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/wBgbGmnY/Screenshot-2025-07-31-182714.png" alt="Seymours Cafe partnership">
+            <div class="gallery-overlay">
+                <h3>Seymours Cafe partnership</h3>
+                <p>11/23/24</p>
+            </div>
+        </div>
+
+        <!-- Paris Baguette partnership - 11/14/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/sXn8Sg6d/Screenshot-2025-07-31-182638.png" alt="Paris Baguette partnership">
+            <div class="gallery-overlay">
+                <h3>Paris Baguette partnership</h3>
+                <p>11/14/24</p>
+            </div>
+        </div>
+
+        <!-- Table to Table partnership - 11/8/24 -->
+        <div class="gallery-item" data-category="events">
+            <img src="https://i.postimg.cc/DwstDFZL/Screenshot-2025-07-31-182549.png" alt="Table to Table partnership">
+            <div class="gallery-overlay">
+                <h3>Table to Table partnership</h3>
+                <p>11/8/24</p>
+            </div>
+        </div>
+
+        <!-- Sombrero Tacoria partnership - 11/2/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/rm8XxbqW/Screenshot-2025-07-31-182443.png" alt="Sombrero Tacoria partnership">
+            <div class="gallery-overlay">
+                <h3>Sombrero Tacoria partnership</h3>
+                <p>11/2/24</p>
+            </div>
+        </div>
+
+        <!-- Blaze Pizza partnership - 10/24/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/SNj4gwCf/Screenshot-2025-07-31-182359.png" alt="Blaze Pizza partnership">
+            <div class="gallery-overlay">
+                <h3>Blaze Pizza partnership</h3>
+                <p>10/24/24</p>
+            </div>
+        </div>
+
+        <!-- First household pickup - 10/20/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/qR00QqxN/Screenshot-2025-07-31-182318.png" alt="First household pickup">
+            <div class="gallery-overlay">
+                <h3>First household pickup</h3>
+                <p>10/20/24</p>
+            </div>
+        </div>
+
+        <!-- Panera Bread partnership - 10/4/24 -->
+        <div class="gallery-item" data-category="donations">
+            <img src="https://i.postimg.cc/mr9280x5/Screenshot-2025-07-31-182136.png" alt="Panera Bread partnership">
+            <div class="gallery-overlay">
+                <h3>Panera Bread partnership</h3>
+                <p>10/4/24</p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/43XgKx9r/f661cd66-ea95-48cc-9b9a-3f5a6c2f68f7.jpg" alt="Aarav Srivastava">
+            <div class="gallery-overlay">
+                <h3>Aarav Srivastava</h3>
+                <p></p>
+            </div>
+        </div>
+    
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/qRRHLDQw/IMG-4876.jpg" alt="Derek Wagner">
+            <div class="gallery-overlay">
+                <h3>Derek Wagener</h3>
+                <p></p>
+            </div>
+        </div>
+    
+       
+
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/3JZK48K9/Screenshot-2025-07-31-175429.png"alt="David Sambol">
+            <div class="gallery-overlay">
+                <h3>David Sambol</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/pT1WdqRv/Screenshot-2025-07-31-174728.png"alt="Julian Katz">
+            <div class="gallery-overlay">
+                <h3>Julian Katz</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/k4NPLCgB/neev-upscaled.jpg"alt="Neev Chaudary">
+            <div class="gallery-overlay">
+                <h3>Neev Chaudary</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/fRHxMQpg/Screenshot-2025-07-31-173002.png"alt="Amanda Zhong">
+            <div class="gallery-overlay">
+                <h3>Amanda Zhong</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/9fsV5zpX/Screenshot-2025-07-31-175523.png"alt="Stephanie Yan">
+            <div class="gallery-overlay">
+                <h3>Stephanie Yan</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="volunteers">
+            <img src="https://i.postimg.cc/MGQNB57x/Screenshot-2025-07-31-175920.png"alt="Arnold Hu">
+            <div class="gallery-overlay">
+                <h3>Arnold Hu</h3>
+                <p></p>
+            </div>
+        </div>
+
+
+        <div class="gallery-item" data-category="chapter-leaders">
+            <img src="https://i.postimg.cc/05WM60cb/Screenshot-2025-07-31-174235.png"alt="Shivkesh Gallipelli- Jersey City">
+            <div class="gallery-overlay">
+                <h3>Shivkesh Gallipelli - Jersey City</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="chapter-leaders">
+            <img src="https://i.postimg.cc/3xpdc57v/Screenshot-2025-07-31-174409.png"alt="Shaurya - Millburn">
+            <div class="gallery-overlay">
+                <h3>Shaurya Adlakha - Millburn</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="chapter-leaders">
+            <img src="https://i.postimg.cc/nc2d95Nq/Screenshot-2025-07-31-173746.png"alt="Anvi Singh- Manalapan">
+            <div class="gallery-overlay">
+                <h3>Anvi Singh - Manalapan</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="chapter-leaders">
+            <img src="https://i.postimg.cc/Bn1KfP5t/Screenshot-2025-07-31-174052.png"alt="Dhanashri Kerry- Edison">
+            <div class="gallery-overlay">
+                <h3>Dhanashri Kerry- Edison</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <div class="gallery-item" data-category="chapter-leaders">
+            <img src="https://i.postimg.cc/2jFGgMkg/Screenshot-2025-07-31-173831.png"alt="Eunice Kim- Basking Ridge">
+            <div class="gallery-overlay">
+                <h3>Eunice Kim - Basking Ridge</h3>
+                <p></p>
+            </div>
+
+        
+
+       
+
+        
+    
+    </div>
+
+    
+    <div id="imageModal" class="modal">
+        <img class="modal-content" id="modalImage">
+        <div class="modal-caption" id="modalCaption"></div>
+    </div>
+
+    <script>
+        // Gallery filtering
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        function filterGallery(filter) {
+        galleryItems.forEach(item => {
+        const category = item.getAttribute('data-category');
+        
+            if (filter === 'all') {
+            // In 'all' view, hide volunteer items
+            item.style.display = category === 'volunteers' ? 'none' : 'block';
+            item.style.display = category === 'chapter-leaders' ? 'none' : 'block';
+            } else {
+            // For other filters, show only matching items
+            item.style.display = category === filter ? 'block' : 'none';
+            }
+
+        });
+    }
+
+        // Add click handlers
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+        // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+        // Get and apply filter
+        const filter = button.getAttribute('data-filter');
+        filterGallery(filter);
+        });
+    });
+
+    // Run initial filter for 'all'
+    filterGallery('all');
+
+        // Modal functionality
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const modalCaption = document.getElementById('modalCaption');
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                modalImg.src = item.querySelector('img').src;
+                modalCaption.innerHTML = item.querySelector('.gallery-overlay').innerHTML;
+            });
+        });
+
+        modal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        galleryItems.forEach(item => {
+            observer.observe(item);
+        });
+
+        // Image loading optimization
+        const images = document.querySelectorAll('.gallery-item img');
+        images.forEach(img => {
+            // Add loading class
+            img.classList.add('loading');
+            
+            // Handle image load
+            img.addEventListener('load', function() {
+                this.classList.remove('loading');
+                this.style.opacity = '1';
+            });
+            
+            // Handle image error
+            img.addEventListener('error', function() {
+                this.classList.remove('loading');
+                this.style.backgroundColor = '#f0f0f0';
+                this.style.display = 'flex';
+                this.style.alignItems = 'center';
+                this.style.justifyContent = 'center';
+                this.innerHTML = '<span style="color: #999; font-size: 14px;">Image not available</span>';
+            });
+            
+            // Set initial opacity for smooth loading
+            img.style.opacity = '0';
+            img.style.transition = 'opacity 0.3s ease';
+        });
+
+        // Login functionality
+        function checkLoginForDonation(event) {
+            event.preventDefault();
+            const userInitial = localStorage.getItem('userInitial');
+            if (!userInitial) {
+                document.getElementById('loginPopup').style.display = 'block';
+            } else {
+                window.location.href = 'page7.html';
+            }
+        }
+
+        function closeLoginPopup() {
+            document.getElementById('loginPopup').style.display = 'none';
+        }
+    </script>
+
+    <!-- Floating Login Button -->
+    <a href="login.html" class="floating-login">
+        <i class="fas fa-user"></i>
+        Login
+    </a>
+
+</body>
+</html>

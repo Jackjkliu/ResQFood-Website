@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News & Updates - ResQFood</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #FF6F61;
+            --secondary-color: #2C3E50;
+            --accent-color: #3498DB;
+            --background-color: #F8F9FA;
+            --text-color: #333333;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* Navigation Menu */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav ul {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            list-style-type: none;
+            padding: 1rem 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav li {
+            flex: 0 0 auto;
+            margin: 0 1rem;
+            white-space: nowrap;
+        }
+
+        .nav li a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav li a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav li a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53, #FFA07A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            color: var(--text-color);
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* Featured News Section */
+        .featured-news {
+            margin-bottom: 4rem;
+        }
+
+        .featured-article {
+            background: linear-gradient(135deg, var(--primary-color), #FF8E53);
+            color: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .featured-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .featured-title {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .featured-excerpt {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+        }
+
+        .featured-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .featured-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .featured-read-more {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .featured-read-more:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .featured-read-more i {
+            font-size: 0.8rem;
+        }
+
+        /* News Grid */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-category {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .news-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .news-excerpt {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .news-date {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .read-more {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .read-more:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Newsletter Signup */
+        .newsletter-section {
+            background: linear-gradient(135deg, var(--secondary-color), #34495e);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .newsletter-title {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-text {
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 400px;
+            margin: 0 auto;
+            gap: 1rem;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .newsletter-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .newsletter-button:hover {
+            background: #FF5A4A;
+        }
+
+        /* Floating Login Button */
+        .floating-login {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--primary-color), #FF8E53);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .floating-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 111, 97, 0.4);
+            background: linear-gradient(135deg, #FF5A4A, #FF7A43);
+        }
+
+        .floating-login i {
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .nav ul {
+                padding: 0.5rem 0;
+            }
+            
+            .nav li {
+                margin: 0 0.5rem;
+            }
+
+            .floating-login {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.8rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .featured-read-more {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="nav">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="partners.html">Our Partners</a></li>
+            <li><a href="how.html">How It Works</a></li>
+            <li><a href="page5.html">Find Nearest Pantry</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="donations.html">View Donations</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <h1 class="page-title animate-on-scroll">News & Updates</h1>
+            <p class="page-subtitle animate-on-scroll">Stay informed about ResQFood's latest initiatives and impact</p>
+
+            <!-- Featured News -->
+            <section class="featured-news animate-on-scroll">
+                <article class="featured-article">
+                    <div class="featured-badge">
+                        <i class="fas fa-star"></i> Featured Story
+                    </div>
+                    <h2 class="featured-title">ResQFood Reaches Major Milestone: $100,000 Worth of Food Rescued!</h2>
+                    <p class="featured-excerpt">
+                        We're thrilled to announce that ResQFood has successfully rescued and redistributed over $100,000 worth of leftover goods
+                        from restaurants to families in need across New Jersey. This milestone wouldn't have been possible without 
+                        our dedicated volunteers, generous donors, and amazing partner organizations.
+                    </p>
+                    <div class="featured-meta">
+                        <div class="featured-date">
+                            <i class="fas fa-calendar"></i>
+                            <span>June 20, 2025</span>
+                        </div>
+                        <div class="featured-author">
+                            <i class="fas fa-user"></i>
+                            <span>ResQFood Team</span>
+                        </div>
+                    </div>
+                    <a href="https://www.instagram.com/p/DLIvZM5xWy2/?img_index=1" target="_blank" class="featured-read-more">
+                        Read More <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </article>
+            </section>
+
+            <!-- News Grid -->
+            <section class="news-grid animate-on-scroll">
+                <article class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-award" style="font-size: 2rem; color: var(--primary-color);"></i>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-category">Recognition</span>
+                        <h3 class="news-title">North Jersey student's food rescue initiative has saved and donated over 20,000 pounds.</h3>
+                        <p class="news-excerpt">
+                            ResQFood's founder, Veer Agarwal has been recognized for his outstanding contributions to his community and 
+                            the environment. His initiative has saved and donated over 20,000 pounds of food, making a significant Impact
+                            in the fight against food waste and hunger.
+                        </p>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <span>Jul 29, 2025</span>
+                            </div>
+                            <a href="https://www.northjersey.com/story/entertainment/dining/2025/07/29/resqfood-nj-delivers-rescued-food-local-pantries-livingston/85379716007/" class="read-more" target="_blank">Read More</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-award" style="font-size: 2rem; color: var(--accent-color);"></i>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-category">Recognition</span>
+                        <h3 class="news-title">News 12 NJ highlights ResQFood and founder Veer Agarwal on their Jersey Proud segment</h3>
+                        <p class="news-excerpt">
+                            Watch the segment highlighting ResQfood and its accomplishments with the button below.
+                        </p>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <span>May 2, 2025</span>
+                            </div>
+                            <a href="https://www.instagram.com/p/DJJwaCcxT-5/" class="read-more">Read More</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-award" style="font-size: 2rem; color: var(--primary-color);"></i>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-category">Recognition</span>
+                        <h3 class="news-title">Livingston Town Council Recognition Award</h3>
+                        <p class="news-excerpt">
+                            ResQFood is honored to get recognized by Mayor Meinhardt and the council members 
+                            at the Livingston Town Council meeting.
+                        </p>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <span>Feb 10, 2025</span>
+                            </div>
+                            <a href="https://www.instagram.com/p/DF6yycqO5JO/?img_index=1" class="read-more">Read More</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- <article class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-users" style="font-size: 2rem; color: var(--accent-color);"></i>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-category">Community</span>
+                        <h3 class="news-title">Volunteer Appreciation Event Success</h3>
+                        <p class="news-excerpt">
+                            Our annual volunteer appreciation event brought together over 200 volunteers to celebrate 
+                            their incredible contributions to our mission.
+                        </p>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <span>Nov 20, 2024</span>
+                            </div>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-leaf" style="font-size: 2rem; color: #27AE60;"></i>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-category">Environment</span>
+                        <h3 class="news-title">Environmental Impact Report Released</h3>
+                        <p class="news-excerpt">
+                            Our latest environmental impact report shows that ResQFood has prevented over 50,000 pounds 
+                            of food from entering landfills this year.
+                        </p>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <span>Nov 15, 2024</span>
+                            </div>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <div class="news-image">
+                        <i class="fas fa-graduation-cap" style="font-size: 2rem; color: var(--primary-color);"></i>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-category">Education</span>
+                        <h3 class="news-title">Food Safety Training Program Launched</h3>
+                        <p class="news-excerpt">
+                            We've launched a comprehensive food safety training program for all volunteers and partner 
+                            organizations to ensure the highest standards of food handling.
+                        </p>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar"></i>
+                                <span>Nov 8, 2024</span>
+                            </div>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </div>
+                </article>
+            -->
+            </section>
+
+            <!-- Newsletter Signup -->
+            <section class="newsletter-section animate-on-scroll">
+                <h2 class="newsletter-title">Stay Updated</h2>
+                <p class="newsletter-text"> (Coming Soon) Subscribe to our newsletter to receive the latest news and updates about ResQFood's impact in the community.</p>
+                <form class="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+                    <button type="submit" class="newsletter-button">
+                        <i class="fas fa-paper-plane"></i> Subscribe
+                    </button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <!-- Floating Login Button -->
+    <a href="login.html" class="floating-login">
+        <i class="fas fa-user"></i>
+        Login
+    </a>
+
+    <script>
+        // Navigation scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('.nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Animate on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with animate-on-scroll class
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Newsletter form submission
+        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('.newsletter-input').value;
+            if (email) {
+                alert('Thank you for subscribing to our newsletter!');
+                this.querySelector('.newsletter-input').value = '';
+            }
+        });
+    </script>
+</body>
+</html>

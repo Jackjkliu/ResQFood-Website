@@ -258,7 +258,7 @@
         </form>
         <div class="links">
             <p>Already Have Account?</p>
-            <button id="signInButton">Sign In</button>
+            <button id="signInButton" onclick="switchToSignIn()">Sign In</button>
         </div>
     </div>
 
@@ -284,7 +284,7 @@
         </form>
         <div class="links">
             <p>Don't have account yet?</p>
-            <button id="signUpButton">Sign Up</button>
+            <button id="signUpButton" onclick="switchToSignUp()">Sign Up</button>
         </div>
     </div>
 
@@ -313,13 +313,31 @@
         }
     
         function switchToSignIn() {
-            document.getElementById('signup').style.display = 'none';
-            document.getElementById('signIn').style.display = 'block';
+            alert('switchToSignIn function called!'); // Simple test
+            console.log('Switching to Sign In'); // Debug log
+            const signupDiv = document.getElementById('signup');
+            const signinDiv = document.getElementById('signIn');
+            
+            console.log('signupDiv:', signupDiv);
+            console.log('signinDiv:', signinDiv);
+            
+            if (signupDiv) {
+                signupDiv.style.display = 'none';
+                console.log('Hidden signup div');
+            }
+            if (signinDiv) {
+                signinDiv.style.display = 'block';
+                console.log('Shown signin div');
+            }
         }
     
         function switchToSignUp() {
-            document.getElementById('signIn').style.display = 'none';
-            document.getElementById('signup').style.display = 'block';
+            console.log('Switching to Sign Up'); // Debug log
+            const signupDiv = document.getElementById('signup');
+            const signinDiv = document.getElementById('signIn');
+            
+            if (signinDiv) signinDiv.style.display = 'none';
+            if (signupDiv) signupDiv.style.display = 'block';
         }
     
         function showLoadingOverlay() {
@@ -375,6 +393,5 @@
                 });
         });
     
-        document.getElementById('signInButton').addEventListener('click', switchToSignIn);
-        document.getElementById('signUpButton').addEventListener('click', switchToSignUp);
+        // Event listeners are now handled by onclick attributes in HTML
     </script>

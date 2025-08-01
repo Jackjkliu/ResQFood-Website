@@ -18,6 +18,67 @@
             overflow-x: hidden;
         }
 
+        /* Navigation Menu - Updated to match home page style */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav ul {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            list-style-type: none;
+            padding: 1rem 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav li {
+            flex: 0 0 auto;
+            margin: 0 1rem;
+            white-space: nowrap;
+        }
+
+        .nav li a {
+            text-decoration: none;
+            color: #2C3E50;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav li a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #FF6F61;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav li a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* Back button */
         .back-button {
             position: absolute;
             top: 20px;
@@ -32,6 +93,7 @@
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: background-color 0.3s ease;
+            z-index: 1001;
         }
 
         .back-button:hover {
@@ -44,10 +106,12 @@
             fill: white;
         }
 
+        /* Container */
         .container {
             max-width: 1500px;
             margin: 0 auto;
             padding: 50px 20px;
+            margin-top: 70px; /* Add top margin to account for fixed navbar */
         }
 
         h1 {
@@ -217,6 +281,39 @@
             animation: animate 9s linear infinite;
         }
 
+                /* Flyer Section */
+        .flyer-section {
+            background-color: #fff;
+            border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 50px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flyer-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.flyer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flyer-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.flyer-image:hover {
+    transform: scale(1.02);
+}
+
         @keyframes animate {
             0% {
                 transform: scale(0) translateY(0) rotate(0deg);
@@ -233,6 +330,59 @@
                 opacity: 0;
             }
         }
+
+        @media (max-width: 768px) {
+            .nav ul {
+                justify-content: flex-start;
+                padding: 1rem 0.5rem;
+            }
+            
+            .nav li {
+                margin: 0 0.5rem;
+            }
+        }
+
+        /* Floating Login Button */
+        .floating-login {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, #FF6F61, #FF8E53);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .floating-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 111, 97, 0.4);
+            background: linear-gradient(135deg, #FF5A4A, #FF7A43);
+        }
+
+        .floating-login i {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .floating-login {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.8rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -241,77 +391,43 @@
         <span></span>
         <span></span>
     </div>
-    <div id="container" style="display: flex; flex-direction: column; min-height: 100vh;">
-        <div class="back-button" onclick="window.location.href='home.html'">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M0 0h24v24H0z" fill="none"/>
-                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-            </svg>
-        </div>
-    <div class="container">
-        <h1 class="animate__animated animate__fadeInDown">About ResQFood</h1>
-       
-        <div class="about-section animate__animated animate__fadeIn">
-            <p class="about-content fade-in">
-                ResQFood is on a mission to revolutionize food rescue and reduce food waste. We connect generous donors with local food banks and pantries, making it easier than ever to contribute to food security in our communities.
-            </p>
-            <p class="about-content fade-in">
-                Founded in 2024, our platform uses innovative technology to streamline the food donation process, ensuring that surplus food reaches those who need it most, quickly and efficiently.
-            </p>
-        </div>
 
-        <h1 style="text-align: center; color: #FF6F61; margin-bottom: 30px;" class="animate__animated animate__fadeIn">Meet The Team</h1>
+    <!-- Updated Navigation Menu -->
+    <nav class="nav">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="partners.html">Our Partners</a></li>
+            <li><a href="how.html">How It Works</a></li>
+            <li><a href="page5.html">Find Nearest Pantry</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="donations.html">View Donations</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+    
+    <div class="back-button" onclick="window.location.href='home.html'">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    </div>
+
+
        
-        <div class="team">
-            <div class="team-member animate__animated animate__fadeInUp">
-                <div class="member-image-container">
-                    <img src="https://i.postimg.cc/ZqSMFgXR/veer.jpg" alt="Veer Agarwal" class="member-image">
-                </div>
-                <div class="member-info">
-                    <h3 class="member-name">Veer Agarwal</h3>
-                    <p class="member-title">CEO and Founder</p>
-                    <p class="member-bio">
-                        Veer Agarwal is a junior at Livingston High School. Outside of school, he enjoys creative writing, playing Tennis, and watching Manchester United games. He has prior coding and web development experience through taking AP CSA and self-studying online.
-                    </p>
-                </div>
-            </div>
-            <div class="team-member animate__animated animate__fadeInUp">
-                <div class="member-image-container">
-                    <img src="https://i.postimg.cc/fT1FkkKY/jack.jpg" alt="Jack Liu" class="member-image">
-                </div>
-                <div class="member-info">
-                    <h3 class="member-name">Jack Liu</h3>
-                    <p class="member-title">Head of Code</p>
-                    <p class="member-bio">
-                        Jack Liu is a junior at Livingston High School. He enjoys studying, going to the gym and playing volleyball. He is the head of code for his robotics team and participates in various STEM centered clubs such as Science Bowl.
-                    </p>
-                </div>
-            </div>
-            <div class="team-member animate__animated animate__fadeInUp">
-                <div class="member-image-container">
-                    <img src="https://i.postimg.cc/zf23D1vs/unnamed-24.jpg" alt="Parth Jain" class="member-image">
-                </div>
-                <div class="member-info">
-                    <h3 class="member-name">Parth Jain</h3>
-                    <p class="member-title">Head of Outreach</p>
-                    <p class="member-bio">
-                        Parth Jain is a junior at Livingston High School. He likes basketball, marching band, singing, and physics. He has leadership experience in band as well as summer camp counseling experience.
-                    </p>
-                </div>
-            </div>
-            <div class="team-member animate__animated animate__fadeInUp">
-                <div class="member-image-container">
-                    <img src="https://i.postimg.cc/x8SB6GPy/unnamed-25.jpg" alt="Armaan Mishra" class="member-image">
-                </div>
-                <div class="member-info">
-                    <h3 class="member-name">Armaan Mishra</h3>
-                    <p class="member-title">Outreach Coordinator</p>
-                    <p class="member-bio">
-                        Armaan Mishra is a junior at Livingston High School. In his free time he enjoys photography, biking, and spending time with family. He has prior experience in Java and Python programming languages.
-                </div>
-            </div>
+        
+
+        <h1 style="text-align: center; color: #FF6F61; margin-bottom: 30px;" class="animate__animated animate__fadeIn">About Us</h1>
+       
+        <!-- Flyer Section -->
+    <div class="flyer-section animate__animated animate__fadeIn">
+        <h1 style="text-align: center; color: #FF6F61; margin-bottom: 20px;">About Us</h1>
+        <div class="flyer-container">
+            <img src="https://i.postimg.cc/KjzPmydc/Res-QFood-Info-Flyer-Final-pdf-8-5-x-11-in.png" alt="ResQFood Flyer" class="flyer-image">
         </div>
     </div>
+       
+    
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const fadeElements = document.querySelectorAll('.fade-in');
@@ -326,7 +442,35 @@
             fadeElements.forEach(element => {
                 observer.observe(element);
             });
+
+            // Navigation scroll effect
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('.nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
         });
+
+        // Placeholder function to match homepage functionality
+        function checkLoginForDonation(event) {
+            event.preventDefault();
+            const userInitial = localStorage.getItem('userInitial');
+            if (!userInitial) {
+                alert('Please log in to post a donation');
+            } else {
+                window.location.href = 'page7.html';
+            }
+        }
     </script>
+
+    <!-- Floating Login Button -->
+    <a href="login.html" class="floating-login">
+        <i class="fas fa-user"></i>
+        Login
+    </a>
+
 </body>
 </html>

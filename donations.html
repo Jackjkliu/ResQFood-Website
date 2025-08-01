@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResQFood - Donation Tracker</title>
+    <!-- Google Sheets API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --primary-color: #FF6F61;
+            --secondary-color: #2C3E50;
+            --accent-color: #3498DB;
+            --background-color: #F8F9FA;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding-top: 60px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navigation Styles */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav ul {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            list-style-type: none;
+            padding: 1rem 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav li {
+            flex: 0 0 auto;
+            margin: 0 1rem;
+            white-space: nowrap;
+        }
+
+        .nav li a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav li a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav li a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* User Menu Styles */
+        .user-menu {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+        }
+
+        .user-icon {
+            width: clamp(30px, 5vw, 40px);
+            height: clamp(30px, 5vw, 40px);
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: clamp(14px, 2.5vw, 20px);
+            border: none;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Donation Tracker Styles */
+        .donation-form {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .donation-list {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .donation-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+
+        .donation-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .donation-item:last-child {
+            border-bottom: none;
+        }
+
+        .total-donations {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: right;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        input, select, textarea, button {
+            padding: 12px;
+            margin: 8px 0;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e8655d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav ul {
+                justify-content: flex-start;
+                padding: 1rem 0.5rem;
+            }
+            
+            .nav li {
+                margin: 0 0.5rem;
+            }
+            
+            .user-menu {
+                top: auto;
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+
+        /* Floating Login Button */
+        .floating-login {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, #FF6F61, #FF8E53);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .floating-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 111, 97, 0.4);
+            background: linear-gradient(135deg, #FF5A4A, #FF7A43);
+        }
+
+        .floating-login i {
+            font-size: 1.1rem;
+        }
+
+        /* Floating Add Donation Button */
+        .floating-add-donation {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+            display: none; /* Hidden by default, shown when logged in */
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .floating-add-donation:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(52, 152, 219, 0.4);
+            background: linear-gradient(135deg, #2980B9, #1F618D);
+        }
+
+        .floating-add-donation i {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .floating-login {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.8rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .floating-add-donation {
+                bottom: 1rem;
+                left: 1rem;
+                padding: 0.8rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="nav">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="partners.html">Our Partners</a></li>
+            <li><a href="how.html">How It Works</a></li>
+            <li><a href="page5.html">Find Nearest Pantry</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="donations.html">View Donations</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <!-- User Menu -->
+    <div class="user-menu">
+        <button id="userIcon" class="user-icon">
+            <i class="fas fa-user-circle"></i>
+        </button>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="container">
+        <div class="login-form">
+            <h2>Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Login</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appPage" class="container">
+        <h1>Donation Tracker</h1>
+        <p class="subheading">Track food donations and see our impact</p>
+        
+        <!-- Total Donations Summary at Top -->
+        <div id="totalDonations" class="total-donations" style="text-align: center; margin: 20px 0; font-size: 1.5rem;">
+            Total Value: $138,611.00
+        </div>
+        
+        <div id="donationForm" class="donation-form" style="display: none;">
+            <h2>Add New Donation</h2>
+            <div id="sheetsStatus" style="margin-bottom: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
+            <form id="donationFormElement">
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="restaurant">Restaurant:</label>
+                    <input type="text" id="restaurant" required>
+                </div>
+                <div class="form-group">
+                    <label for="volunteers">Volunteer(s):</label>
+                    <input type="text" id="volunteers" placeholder="Enter volunteer names" required>
+                </div>
+                <div class="form-group">
+                    <label for="contents">Contents:</label>
+                    <textarea id="contents" rows="3" placeholder="Describe the food items donated" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="dollarValue">Estimated Dollar Value:</label>
+                    <input type="number" id="dollarValue" min="0" step="0.01" placeholder="0.00" required>
+                </div>
+                <button type="submit">Add Donation</button>
+                <button type="button" onclick="hideDonationForm()" style="background-color: #6c757d; margin-top: 10px;">Cancel</button>
+            </form>
+        </div>
+
+        <div class="donation-list">
+            <h2>Recent Donations</h2>
+            <div id="donationsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Google Sheets Configuration
+        // IMPORTANT: Replace these with your actual values
+        const GOOGLE_SHEETS_CONFIG = {
+            API_KEY: 'AIzaSyC615OzQWyxwyvOrurMYx_O9TmlEtvxMHs', // Replace with your Google API key
+            SHEET_ID: '1PLdt7ga9ul8HIGAdMXVK53yrVwq9wBZNioJ3p3T41Eo', // Replace with your Google Sheet ID
+            RANGE: 'Sheet1!A:E', // Main data range
+            TOTAL_RANGE: 'Sheet1!E:E' // Range to get the total from bottom row
+        };
+
+        // User credentials
+        const validCredentials = {
+            username: 'admin',
+            password: 'password123'
+        };
+
+        // Initialize donations array (fallback storage)
+        let donations = JSON.parse(localStorage.getItem('donations')) || [];
+        let isGoogleSheetsLoaded = false;
+        
+        // Initialize with default total
+        window.sheetTotal = 138611.00;
+
+        // Initialize Google Sheets API
+        function initGoogleSheets() {
+            gapi.load('client', async () => {
+                try {
+                    await gapi.client.init({
+                        apiKey: GOOGLE_SHEETS_CONFIG.API_KEY,
+                        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
+                    });
+                    isGoogleSheetsLoaded = true;
+                    showStatus('Google Sheets connected successfully!', 'success');
+                    loadDonationsFromSheet();
+                } catch (error) {
+                    console.error('Error initializing Google Sheets:', error);
+                    showStatus('Using local storage (Google Sheets not connected)', 'warning');
+                    displayDonations();
+                }
+            });
+        }
+
+        // Show status messages
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('sheetsStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = message;
+            statusDiv.style.backgroundColor = type === 'success' ? '#d4edda' : 
+                                           type === 'error' ? '#f8d7da' : '#fff3cd';
+            statusDiv.style.color = type === 'success' ? '#155724' : 
+                                   type === 'error' ? '#721c24' : '#856404';
+            statusDiv.style.border = `1px solid ${type === 'success' ? '#c3e6cb' : 
+                                                 type === 'error' ? '#f5c6cb' : '#ffeaa7'}`;
+            
+            // Hide status after 5 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load donations from Google Sheet
+        async function loadDonationsFromSheet() {
+            if (!isGoogleSheetsLoaded) {
+                displayDonations();
+                return;
+            }
+
+            try {
+                // Load main donation data
+                const response = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: GOOGLE_SHEETS_CONFIG.SHEET_ID,
+                    range: GOOGLE_SHEETS_CONFIG.RANGE
+                });
+
+                const values = response.result.values;
+                if (values && values.length > 1) {
+                    // Skip header row and convert to donation objects
+                    // Filter out any rows that might be totals (look for "Total" in restaurant column)
+                    donations = values.slice(1)
+                        .filter(row => row[1] && !row[1].toLowerCase().includes('total'))
+                        .map(row => ({
+                            date: row[0] || '',
+                            restaurant: row[1] || '',
+                            volunteers: row[2] || '',
+                            contents: row[3] || '',
+                            dollarValue: parseFloat(row[4]) || 0
+                        })).reverse(); // Show newest first
+
+                    // Update local storage as backup
+                    localStorage.setItem('donations', JSON.stringify(donations));
+                } else {
+                    donations = [];
+                }
+
+                // Load the total from the sheet
+                await loadTotalFromSheet();
+                displayDonations();
+                updateGlobalStats();
+            } catch (error) {
+                console.error('Error loading from Google Sheets:', error);
+                showStatus('Error loading from Google Sheets, using local data', 'error');
+                displayDonations();
+            }
+        }
+
+        // Load total value from Google Sheet
+        async function loadTotalFromSheet() {
+            try {
+                const response = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: GOOGLE_SHEETS_CONFIG.SHEET_ID,
+                    range: GOOGLE_SHEETS_CONFIG.TOTAL_RANGE
+                });
+
+                const values = response.result.values;
+                if (values && values.length > 0) {
+                    // Find the last non-empty cell in column E (dollar values)
+                    for (let i = values.length - 1; i >= 0; i--) {
+                        if (values[i][0] && !isNaN(parseFloat(values[i][0]))) {
+                            const totalValue = parseFloat(values[i][0]);
+                            // Store the sheet total globally
+                            window.sheetTotal = totalValue;
+                            break;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading total from Google Sheets:', error);
+                // Keep the default total if we can't load from sheet
+                window.sheetTotal = 138611.00;
+            }
+        }
+
+        // Add donation to Google Sheet
+        async function addToGoogleSheet(donation) {
+            if (!isGoogleSheetsLoaded) {
+                return false;
+            }
+
+            try {
+                const values = [[
+                    donation.date,
+                    donation.restaurant,
+                    donation.volunteers,
+                    donation.contents,
+                    donation.dollarValue
+                ]];
+
+                await gapi.client.sheets.spreadsheets.values.append({
+                    spreadsheetId: GOOGLE_SHEETS_CONFIG.SHEET_ID,
+                    range: 'Sheet1!A:E',
+                    valueInputOption: 'USER_ENTERED',
+                    resource: { values }
+                });
+
+                return true;
+            } catch (error) {
+                console.error('Error adding to Google Sheets:', error);
+                return false;
+            }
+        }
+
+        // Show/Hide donation form functions
+        function showDonationForm() {
+            document.getElementById('donationForm').style.display = 'block';
+            document.getElementById('addDonationBtn').style.display = 'none';
+            // Set today's date as default when showing form
+            document.getElementById('date').value = new Date().toISOString().split('T')[0];
+            // Scroll to form
+            document.getElementById('donationForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideDonationForm() {
+            document.getElementById('donationForm').style.display = 'none';
+            document.getElementById('addDonationBtn').style.display = 'flex';
+        }
+
+        // Check authentication
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            document.getElementById('loginPage').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('appPage').style.display = isLoggedIn ? 'block' : 'none';
+            
+            // Show/hide the add donation button based on login status
+            const addDonationBtn = document.getElementById('addDonationBtn');
+            if (addDonationBtn) {
+                addDonationBtn.style.display = isLoggedIn ? 'flex' : 'none';
+            }
+            
+            if (isLoggedIn) {
+                // Initialize Google Sheets if logged in
+                if (GOOGLE_SHEETS_CONFIG.API_KEY !== 'YOUR_API_KEY_HERE') {
+                    initGoogleSheets();
+                } else {
+                    showStatus('Please configure Google Sheets API key', 'warning');
+                    displayDonations();
+                    updateGlobalStats();
+                }
+            }
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === validCredentials.username && password === validCredentials.password) {
+                localStorage.setItem('isLoggedIn', 'true');
+                checkAuth();
+                document.getElementById('loginError').textContent = '';
+                document.getElementById('loginForm').reset();
+            } else {
+                document.getElementById('loginError').textContent = 'Invalid username or password';
+            }
+        }
+
+        // Calculate estimated meals from dollar value (approx $3 per meal)
+        function calculateMeals(dollarValue) {
+            return Math.round(dollarValue / 3);
+        }
+
+        // Update global stats that will be shown on homepage
+        function updateGlobalStats() {
+            const totalValue = donations.reduce((sum, donation) => sum + donation.dollarValue, 0);
+            const totalMeals = calculateMeals(totalValue);
+            const totalRescues = donations.length;
+
+            const stats = {
+                dollarValue: totalValue.toFixed(2),
+                meals: totalMeals,
+                rescues: totalRescues,
+                lastUpdated: new Date().toLocaleDateString()
+            };
+
+            localStorage.setItem('resqfoodStats', JSON.stringify(stats));
+        }
+
+        // Add new donation
+        async function addDonation(event) {
+            event.preventDefault();
+            
+            const donation = {
+                date: document.getElementById('date').value,
+                restaurant: document.getElementById('restaurant').value,
+                volunteers: document.getElementById('volunteers').value,
+                contents: document.getElementById('contents').value,
+                dollarValue: parseFloat(document.getElementById('dollarValue').value)
+            };
+
+            // Try to add to Google Sheets first
+            const addedToSheets = await addToGoogleSheet(donation);
+            
+            if (addedToSheets) {
+                showStatus('Donation added to Google Sheets successfully!', 'success');
+                // Reload from sheets to get updated data
+                await loadDonationsFromSheet();
+            } else {
+                // Fallback to local storage
+                donations.unshift(donation);
+                localStorage.setItem('donations', JSON.stringify(donations));
+                showStatus('Donation saved locally (Google Sheets unavailable)', 'warning');
+                displayDonations();
+            }
+            
+            // Update global stats
+            updateGlobalStats();
+            
+            // Reset form and hide it
+            event.target.reset();
+            hideDonationForm();
+        }
+
+        // Display donations
+        function displayDonations() {
+            const donationsList = document.getElementById('donationsList');
+            
+            donationsList.innerHTML = '';
+            
+            if (donations.length === 0) {
+                donationsList.innerHTML = '<p>No donations recorded yet.</p>';
+            } else {
+                donations.forEach(donation => {
+                    const donationElement = document.createElement('div');
+                    donationElement.className = 'donation-item';
+                    donationElement.innerHTML = `
+                        <div>
+                            <strong>${donation.restaurant}</strong> - $${donation.dollarValue.toFixed(2)}
+                            <br><small>Volunteers: ${donation.volunteers}</small>
+                            <br><small>Contents: ${donation.contents}</small>
+                        </div>
+                        <div>${donation.date}</div>
+                    `;
+                    donationsList.appendChild(donationElement);
+                });
+            }
+
+            // Update the total at the top with current data
+            updateTopTotal();
+        }
+
+        // Update the total display at the top
+        function updateTopTotal() {
+            const totalElement = document.getElementById('totalDonations');
+            
+            // Use the total from Google Sheet if available, otherwise use default
+            const totalValue = window.sheetTotal || 138611.00;
+            const totalMeals = calculateMeals(totalValue);
+            
+            totalElement.textContent = `Total Value: $${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // Event listeners
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('donationFormElement').addEventListener('submit', addDonation);
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Initial auth check
+        checkAuth();
+    </script>
+
+    <!-- Floating Login Button -->
+    <a href="login.html" class="floating-login">
+        <i class="fas fa-user"></i>
+        Login
+    </a>
+
+    <!-- Floating Add Donation Button -->
+    <button id="addDonationBtn" class="floating-add-donation" onclick="showDonationForm()">
+        <i class="fas fa-plus"></i>
+        Add Donation Manually
+    </button>
+
+</body>
+</html>
