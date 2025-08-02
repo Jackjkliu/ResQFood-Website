@@ -98,40 +98,9 @@
             transform-origin: bottom left;
         }
 
-        /* User Menu Styles */
-        .user-menu {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1001;
-        }
 
-        .user-icon {
-            width: clamp(30px, 5vw, 40px);
-            height: clamp(30px, 5vw, 40px);
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: clamp(14px, 2.5vw, 20px);
-            border: none;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
 
         /* Donation Tracker Styles */
-        .donation-form {
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
 
         .donation-list {
             background-color: white;
@@ -164,59 +133,9 @@
             color: var(--primary-color);
         }
 
-        input, select, textarea, button {
-            padding: 12px;
-            margin: 8px 0;
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-family: 'Poppins', sans-serif;
-        }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
 
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
 
-        button:hover {
-            background-color: #e8655d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .login-form {
-            max-width: 400px;
-            margin: 40px auto;
-            padding: 30px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .error-message {
-            color: #e74c3c;
-            margin-top: 10px;
-            text-align: center;
-        }
 
         @media (max-width: 768px) {
             .nav ul {
@@ -226,93 +145,6 @@
             
             .nav li {
                 margin: 0 0.5rem;
-            }
-            
-            .user-menu {
-                top: auto;
-                bottom: 1rem;
-                right: 1rem;
-            }
-        }
-
-        /* Floating Login Button */
-        .floating-login {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 1000;
-            background: linear-gradient(135deg, #FF6F61, #FF8E53);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 1rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(255, 111, 97, 0.3);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .floating-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(255, 111, 97, 0.4);
-            background: linear-gradient(135deg, #FF5A4A, #FF7A43);
-        }
-
-        .floating-login i {
-            font-size: 1.1rem;
-        }
-
-        /* Floating Add Donation Button */
-        .floating-add-donation {
-            position: fixed;
-            bottom: 2rem;
-            left: 2rem;
-            z-index: 1000;
-            background: linear-gradient(135deg, #3498DB, #2980B9);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 1rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
-            transition: all 0.3s ease;
-            display: none; /* Hidden by default, shown when logged in */
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .floating-add-donation:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(52, 152, 219, 0.4);
-            background: linear-gradient(135deg, #2980B9, #1F618D);
-        }
-
-        .floating-add-donation i {
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 768px) {
-            .floating-login {
-                bottom: 1rem;
-                right: 1rem;
-                padding: 0.8rem 1.2rem;
-                font-size: 0.9rem;
-            }
-            
-            .floating-add-donation {
-                bottom: 1rem;
-                left: 1rem;
-                padding: 0.8rem 1.2rem;
-                font-size: 0.9rem;
             }
         }
     </style>
@@ -332,31 +164,7 @@
         </ul>
     </nav>
 
-    <!-- User Menu -->
-    <div class="user-menu">
-        <button id="userIcon" class="user-icon">
-            <i class="fas fa-user-circle"></i>
-        </button>
-    </div>
 
-    <!-- Login Page -->
-    <div id="loginPage" class="container">
-        <div class="login-form">
-            <h2>Admin Login</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit">Login</button>
-                <div id="loginError" class="error-message"></div>
-            </form>
-        </div>
-    </div>
 
     <!-- Main App -->
     <div id="appPage" class="container">
@@ -368,34 +176,7 @@
             Total Value: $138,611.00
         </div>
         
-        <div id="donationForm" class="donation-form" style="display: none;">
-            <h2>Add New Donation</h2>
-            <div id="sheetsStatus" style="margin-bottom: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
-            <form id="donationFormElement">
-                <div class="form-group">
-                    <label for="date">Date:</label>
-                    <input type="date" id="date" required>
-                </div>
-                <div class="form-group">
-                    <label for="restaurant">Restaurant:</label>
-                    <input type="text" id="restaurant" required>
-                </div>
-                <div class="form-group">
-                    <label for="volunteers">Volunteer(s):</label>
-                    <input type="text" id="volunteers" placeholder="Enter volunteer names" required>
-                </div>
-                <div class="form-group">
-                    <label for="contents">Contents:</label>
-                    <textarea id="contents" rows="3" placeholder="Describe the food items donated" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="dollarValue">Estimated Dollar Value:</label>
-                    <input type="number" id="dollarValue" min="0" step="0.01" placeholder="0.00" required>
-                </div>
-                <button type="submit">Add Donation</button>
-                <button type="button" onclick="hideDonationForm()" style="background-color: #6c757d; margin-top: 10px;">Cancel</button>
-            </form>
-        </div>
+
 
         <div class="donation-list">
             <h2>Recent Donations</h2>
@@ -413,14 +194,23 @@
             TOTAL_RANGE: 'Sheet1!E:E' // Range to get the total from bottom row
         };
 
-        // User credentials
-        const validCredentials = {
-            username: 'admin',
-            password: 'password123'
-        };
-
-        // Initialize donations array (fallback storage)
-        let donations = JSON.parse(localStorage.getItem('donations')) || [];
+        // Initialize donations array with some sample data as fallback
+        let donations = [
+            {
+                date: '2024-01-15',
+                restaurant: 'Sample Restaurant',
+                volunteers: 'John Doe, Jane Smith',
+                contents: 'Sandwiches, salads, and pastries',
+                dollarValue: 250.00
+            },
+            {
+                date: '2024-01-14',
+                restaurant: 'Another Cafe',
+                volunteers: 'Mike Johnson',
+                contents: 'Fresh bread and soup',
+                dollarValue: 180.50
+            }
+        ];
         let isGoogleSheetsLoaded = false;
         
         // Initialize with default total
@@ -445,22 +235,9 @@
             });
         }
 
-        // Show status messages
+        // Show status messages (console only since we removed the status div)
         function showStatus(message, type) {
-            const statusDiv = document.getElementById('sheetsStatus');
-            statusDiv.style.display = 'block';
-            statusDiv.textContent = message;
-            statusDiv.style.backgroundColor = type === 'success' ? '#d4edda' : 
-                                           type === 'error' ? '#f8d7da' : '#fff3cd';
-            statusDiv.style.color = type === 'success' ? '#155724' : 
-                                   type === 'error' ? '#721c24' : '#856404';
-            statusDiv.style.border = `1px solid ${type === 'success' ? '#c3e6cb' : 
-                                                 type === 'error' ? '#f5c6cb' : '#ffeaa7'}`;
-            
-            // Hide status after 5 seconds
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-            }, 5000);
+            console.log(`${type.toUpperCase()}: ${message}`);
         }
 
         // Load donations from Google Sheet
@@ -564,58 +341,21 @@
             }
         }
 
-        // Show/Hide donation form functions
-        function showDonationForm() {
-            document.getElementById('donationForm').style.display = 'block';
-            document.getElementById('addDonationBtn').style.display = 'none';
-            // Set today's date as default when showing form
-            document.getElementById('date').value = new Date().toISOString().split('T')[0];
-            // Scroll to form
-            document.getElementById('donationForm').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function hideDonationForm() {
-            document.getElementById('donationForm').style.display = 'none';
-            document.getElementById('addDonationBtn').style.display = 'flex';
-        }
-
-        // Check authentication
-        function checkAuth() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            document.getElementById('loginPage').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('appPage').style.display = isLoggedIn ? 'block' : 'none';
+        // Initialize the page
+        function initializePage() {
+            console.log('Initializing donations page...');
+            console.log('Initial donations count:', donations.length);
             
-            // Show/hide the add donation button based on login status
-            const addDonationBtn = document.getElementById('addDonationBtn');
-            if (addDonationBtn) {
-                addDonationBtn.style.display = isLoggedIn ? 'flex' : 'none';
-            }
+            // Always show the donations display first
+            displayDonations();
+            updateGlobalStats();
             
-            if (isLoggedIn) {
-                // Initialize Google Sheets if logged in
-                if (GOOGLE_SHEETS_CONFIG.API_KEY !== 'YOUR_API_KEY_HERE') {
-                    initGoogleSheets();
-                } else {
-                    showStatus('Please configure Google Sheets API key', 'warning');
-                    displayDonations();
-                    updateGlobalStats();
-                }
-            }
-        }
-
-        // Handle login
-        function handleLogin(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            if (username === validCredentials.username && password === validCredentials.password) {
-                localStorage.setItem('isLoggedIn', 'true');
-                checkAuth();
-                document.getElementById('loginError').textContent = '';
-                document.getElementById('loginForm').reset();
+            // Then try to load from Google Sheets to update with real data
+            if (GOOGLE_SHEETS_CONFIG.API_KEY !== 'YOUR_API_KEY_HERE') {
+                console.log('Loading data from Google Sheets...');
+                initGoogleSheets();
             } else {
-                document.getElementById('loginError').textContent = 'Invalid username or password';
+                console.log('Please configure Google Sheets API key');
             }
         }
 
@@ -640,51 +380,27 @@
             localStorage.setItem('resqfoodStats', JSON.stringify(stats));
         }
 
-        // Add new donation
-        async function addDonation(event) {
-            event.preventDefault();
-            
-            const donation = {
-                date: document.getElementById('date').value,
-                restaurant: document.getElementById('restaurant').value,
-                volunteers: document.getElementById('volunteers').value,
-                contents: document.getElementById('contents').value,
-                dollarValue: parseFloat(document.getElementById('dollarValue').value)
-            };
 
-            // Try to add to Google Sheets first
-            const addedToSheets = await addToGoogleSheet(donation);
-            
-            if (addedToSheets) {
-                showStatus('Donation added to Google Sheets successfully!', 'success');
-                // Reload from sheets to get updated data
-                await loadDonationsFromSheet();
-            } else {
-                // Fallback to local storage
-                donations.unshift(donation);
-                localStorage.setItem('donations', JSON.stringify(donations));
-                showStatus('Donation saved locally (Google Sheets unavailable)', 'warning');
-                displayDonations();
-            }
-            
-            // Update global stats
-            updateGlobalStats();
-            
-            // Reset form and hide it
-            event.target.reset();
-            hideDonationForm();
-        }
 
         // Display donations
         function displayDonations() {
+            console.log('Displaying donations...', donations.length, 'items');
             const donationsList = document.getElementById('donationsList');
+            
+            if (!donationsList) {
+                console.error('donationsList element not found!');
+                return;
+            }
             
             donationsList.innerHTML = '';
             
             if (donations.length === 0) {
+                console.log('No donations to display');
                 donationsList.innerHTML = '<p>No donations recorded yet.</p>';
             } else {
-                donations.forEach(donation => {
+                console.log('Displaying', donations.length, 'donations');
+                donations.forEach((donation, index) => {
+                    console.log(`Donation ${index}:`, donation);
                     const donationElement = document.createElement('div');
                     donationElement.className = 'donation-item';
                     donationElement.innerHTML = `
@@ -714,10 +430,6 @@
             totalElement.textContent = `Total Value: $${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
-        // Event listeners
-        document.getElementById('loginForm').addEventListener('submit', handleLogin);
-        document.getElementById('donationFormElement').addEventListener('submit', addDonation);
-
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('.nav');
@@ -728,21 +440,23 @@
             }
         });
 
-        // Initial auth check
-        checkAuth();
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing page...');
+            initializePage();
+        });
+        
+        // Also initialize immediately in case DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            // DOM is still loading
+        } else {
+            // DOM is already loaded
+            console.log('DOM already loaded, initializing page...');
+            initializePage();
+        }
     </script>
 
-    <!-- Floating Login Button -->
-    <a href="login.html" class="floating-login">
-        <i class="fas fa-user"></i>
-        Login
-    </a>
 
-    <!-- Floating Add Donation Button -->
-    <button id="addDonationBtn" class="floating-add-donation" onclick="showDonationForm()">
-        <i class="fas fa-plus"></i>
-        Add Donation Manually
-    </button>
 
 </body>
 </html>
