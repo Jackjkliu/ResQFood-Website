@@ -13,7 +13,7 @@
 3. Purchase the domain
 
 ### Step 2: Set up GitHub Pages
-1. Go to https://github.com/keowoo78/yo
+1. Go to https://github.com/Jackjkliu/ResQFood-Website
 2. Click "Settings" tab
 3. Scroll to "Pages" in left sidebar
 4. Under "Source": Select "Deploy from a branch"
@@ -54,7 +54,7 @@ Value: 185.199.111.153
 ```
 Type: CNAME
 Name: www
-Value: keowoo78.github.io
+Value: Jackjkliu.github.io
 ```
 
 ### Step 5: Wait for DNS Propagation
@@ -69,7 +69,7 @@ Value: keowoo78.github.io
 1. Go to [netlify.com](https://netlify.com)
 2. Sign up with GitHub account
 3. Click "New site from Git"
-4. Choose your GitHub repo: keowoo78/yo
+4. Choose your GitHub repo: Jackjkliu/ResQFood-Website
 5. Deploy settings:
    - Build command: (leave empty)
    - Publish directory: (leave empty or set to "/")
