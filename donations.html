@@ -274,41 +274,16 @@
                     donations = [];
                 }
 
-                // Load the total from the sheet
-                await loadTotalFromSheet();
+                // Total = sum of every donation row. (The old approach read the last
+                // cell in column E as the total, which broke once new donations were
+                // appended below the total row and showed a single $200 donation.)
+                window.sheetTotal = donations.reduce((sum, d) => sum + d.dollarValue, 0);
                 displayDonations();
                 updateGlobalStats();
             } catch (error) {
                 console.error('Error loading from Google Sheets:', error);
                 showStatus('Error loading from Google Sheets, using local data', 'error');
                 displayDonations();
-            }
-        }
-
-        // Load total value from Google Sheet
-        async function loadTotalFromSheet() {
-            try {
-                const response = await gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: GOOGLE_SHEETS_CONFIG.SHEET_ID,
-                    range: GOOGLE_SHEETS_CONFIG.TOTAL_RANGE
-                });
-
-                const values = response.result.values;
-                if (values && values.length > 0) {
-                    // Find the last non-empty cell in column E (dollar values)
-                    for (let i = values.length - 1; i >= 0; i--) {
-                        if (values[i][0] && !isNaN(parseFloat(values[i][0]))) {
-                            const totalValue = parseFloat(values[i][0]);
-                            // Store the sheet total globally
-                            window.sheetTotal = totalValue;
-                            break;
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading total from Google Sheets:', error);
-                // Keep the default total if we can't load from sheet
-                window.sheetTotal = 138611.00;
             }
         }
 

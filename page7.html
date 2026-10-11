@@ -259,9 +259,9 @@
             <button onclick="nextStep('weight')">Finish</button>
         </div>
         <div id="success-message" style="display:none;">
-            <h2>Success!</h2>
-            <p>Thank you for your donation. We'll be in touch soon.</p>
-            <p>A confirmation SMS has been sent to your phone.</p>
+            <h2>One last step: send the email</h2>
+            <p>Your email app should have opened with your pickup details filled in. Press <strong>Send</strong> so the ResQFood team gets your request.</p>
+            <p>Didn't open? <a id="email-link" href="#">Open the email</a>, or call or text us at <a href="tel:+19739740346">(973) 974-0346</a>.</p>
         </div>
     </div>
     <script>
@@ -370,7 +370,6 @@ function nextStep(step) {
         formData.weight = document.getElementById('donation-weight').value;
         if (formData.weight && parseFloat(formData.weight) > 0) {
             document.getElementById('weight-input').style.display = 'none';
-            document.getElementById('success-message').style.display = 'block';
             document.getElementById('step7').classList.add('active');
             document.getElementById('line6-7').classList.add('active');
             
@@ -381,10 +380,7 @@ Product Type(s): ${formData.selectedProducts.join(', ')}
 Weight: ${formData.weight} lbs
 Pickup Window: ${formData.pickupDay}, ${formData.pickupTime}`;
 
-            sendSMS(formData.phoneNumber, fullMessage);
-
-            // Redirect to page8.html
-            window.location.href = 'page8.html';
+            submitPickupRequest(fullMessage);
         } else {
             alert("Please enter a valid weight greater than 0.");
         }
@@ -419,21 +415,42 @@ document.getElementById('phone-number').addEventListener('input', function(e) {
     formatPhoneNumber(e.target);
 });
 
-function sendSMS(phoneNumber, message) {
-    fetch('/send-sms', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('SMS sent successfully:', data);
-    })
-    .catch((error) => {
-        console.error('Error sending SMS:', error);
-    });
+// Where pickup requests go. GitHub Pages only serves files, so the old
+// '/send-sms' server route always failed and requests were silently lost.
+// Now: if PICKUP_ENDPOINT is set (a Google Apps Script web app, see
+// pickup-requests.gs), requests are saved there; otherwise, or if that fails,
+// the donor's email app opens with the request filled in.
+const PICKUP_ENDPOINT = ''; // paste the Apps Script web app URL here after deploying
+const PICKUP_EMAIL = 'veeragarwal45@gmail.com';
+
+async function submitPickupRequest(message) {
+    if (PICKUP_ENDPOINT) {
+        try {
+            // A plain-text body keeps this a "simple" request, so the browser
+            // skips the CORS preflight that Apps Script can't answer.
+            const response = await fetch(PICKUP_ENDPOINT, {
+                method: 'POST',
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (result.ok) {
+                window.location.href = 'page8.html';
+                return;
+            }
+            console.error('Pickup endpoint rejected the request:', result);
+        } catch (error) {
+            console.error('Pickup endpoint failed, falling back to email:', error);
+        }
+    }
+    showEmailFallback(message);
+}
+
+function showEmailFallback(message) {
+    const subject = `Pickup request: ${formData.firstName} ${formData.lastName}`;
+    const href = `mailto:${PICKUP_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    document.getElementById('email-link').href = href;
+    document.getElementById('success-message').style.display = 'block';
+    window.location.href = href;
 }
 
 function setupPickupWindow() {
