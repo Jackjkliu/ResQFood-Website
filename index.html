@@ -7,40 +7,40 @@
     <meta name="description" content="ResQFood is a student-led food rescue program in New Jersey that moves surplus food from local restaurants to food pantries.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         /* ---------- Design tokens ----------
-           One place to change color, type, radius, and spacing for the whole page.
-           brand-500 is the original ResQFood coral (decorative use only);
-           brand-600 is a darker coral that passes WCAG AA contrast with white text. */
+           Color strategy: "committed". Tomato red (from the ResQFood logo) owns the
+           hero and closing bands; produce green owns the impact band; everything
+           else sits on white. Every text/background pair below passes WCAG AA. */
         :root {
-            --brand-50: #FFF4F2;
-            --brand-100: #FFE3DF;
-            --brand-500: #FF6F61;
-            --brand-600: #C73E32;
-            --brand-700: #A3322A;
-            --ink-900: #1F2A37;
-            --ink-700: #2C3E50;
-            --ink-500: #5B6675;
-            --leaf-600: #2F6F4E;
-            --leaf-50: #EEF6F1;
-            --cream: #FFFBF7;
+            --tomato-50: #FDEDEA;
+            --tomato-600: #C8352B;
+            --tomato-700: #A42A22;
+            --butter: #FFF1CE;
+            --produce-50: #EAF3EC;
+            --produce-600: #2E6B45;
+            --produce-800: #17432C;
+            --produce-200: #BFD9C6;
+            --ink-900: #1B1F1D;
+            --ink-600: #4A524E;
             --surface: #FFFFFF;
-            --line: #EADFD8;
+            --line: #DCE3DE;
+            --on-color: #FFFFFF;
 
-            --font-display: 'Fraunces', Georgia, serif;
+            --font-display: 'Bricolage Grotesque', 'Arial Narrow', sans-serif;
             --font-body: 'Poppins', system-ui, sans-serif;
 
             --radius-sm: 10px;
             --radius-md: 16px;
-            --radius-lg: 28px;
-            --shadow-card: 0 1px 2px rgba(31, 42, 55, 0.06), 0 8px 24px rgba(31, 42, 55, 0.06);
-            --shadow-lift: 0 2px 4px rgba(31, 42, 55, 0.06), 0 16px 40px rgba(31, 42, 55, 0.10);
+            --radius-lg: 24px;
+            --shadow-card: 0 1px 2px rgba(27, 31, 29, 0.06), 0 8px 24px rgba(27, 31, 29, 0.08);
 
             --section-y: clamp(64px, 9vw, 120px);
             --gutter: clamp(16px, 4vw, 32px);
             --max-w: 1180px;
+            --tap: 44px;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -52,8 +52,8 @@
             font-family: var(--font-body);
             font-size: 1rem;
             line-height: 1.65;
-            color: var(--ink-700);
-            background: var(--cream);
+            color: var(--ink-600);
+            background: var(--surface);
             -webkit-font-smoothing: antialiased;
         }
 
@@ -74,56 +74,37 @@
             top: -100px;
             z-index: 2000;
             background: var(--ink-900);
-            color: #fff;
+            color: var(--on-color);
             padding: 0.6rem 1rem;
             border-radius: var(--radius-sm);
         }
         .skip-link:focus { top: 1rem; }
 
         :focus-visible {
-            outline: 3px solid var(--brand-600);
+            outline: 3px solid var(--tomato-600);
             outline-offset: 3px;
             border-radius: 6px;
         }
+        .band-tomato :focus-visible, .band-produce :focus-visible { outline-color: var(--butter); }
 
-        /* ---------- Shared type ---------- */
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--brand-600);
-        }
-        .eyebrow::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--brand-500);
-        }
-
-        h1, h2, h3 { color: var(--ink-900); line-height: 1.15; }
-        h1, h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; }
-        h2 { font-size: clamp(1.9rem, 4vw, 2.75rem); }
+        /* ---------- Type ---------- */
+        h1, h2, h3 { color: var(--ink-900); line-height: 1.1; }
+        h1, h2 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; }
+        h2 { font-size: clamp(2rem, 4.5vw, 3rem); }
         h3 { font-size: 1.15rem; font-weight: 600; }
 
         .section { padding: var(--section-y) 0; }
-        .section-head { max-width: 640px; margin-bottom: clamp(32px, 5vw, 56px); }
-        .section-head h2 { margin-top: 0.75rem; }
-        .section-head p { margin-top: 1rem; color: var(--ink-500); font-size: 1.05rem; }
-        .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+        .section-head { max-width: 660px; margin-bottom: clamp(32px, 5vw, 56px); }
+        .section-head p { margin-top: 1rem; font-size: 1.05rem; }
 
-        /* ---------- Buttons ---------- */
+        /* ---------- Buttons & links ---------- */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.55rem;
-            min-height: 48px;
-            padding: 0.75rem 1.4rem;
+            min-height: 52px;
+            padding: 0.75rem 1.5rem;
             border-radius: 999px;
             font-family: inherit;
             font-weight: 600;
@@ -131,21 +112,24 @@
             text-decoration: none;
             border: 2px solid transparent;
             cursor: pointer;
-            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
         }
         .btn:hover { transform: translateY(-2px); }
-        .btn-primary { background: var(--brand-600); color: #fff; box-shadow: 0 6px 18px rgba(199, 62, 50, 0.28); }
-        .btn-primary:hover { background: var(--brand-700); }
-        .btn-secondary { background: var(--surface); color: var(--ink-900); border-color: var(--ink-900); }
-        .btn-secondary:hover { background: var(--ink-900); color: #fff; }
-        .btn-small { min-height: 40px; padding: 0.45rem 1.1rem; font-size: 0.92rem; }
+        .btn-primary { background: var(--tomato-600); color: var(--on-color); }
+        .btn-primary:hover { background: var(--tomato-700); }
+        .btn-light { background: var(--surface); color: var(--tomato-700); }
+        .btn-light:hover { background: var(--butter); }
+        .btn-outline-light { color: var(--on-color); border-color: var(--on-color); }
+        .btn-outline-light:hover { background: var(--on-color); color: var(--tomato-700); }
+        .btn-small { min-height: var(--tap); padding: 0.45rem 1.1rem; font-size: 0.92rem; }
 
         .text-link {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            min-height: var(--tap);
             font-weight: 600;
-            color: var(--brand-600);
+            color: var(--tomato-600);
             text-decoration: none;
         }
         .text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -157,20 +141,18 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(255, 251, 247, 0.88);
-            backdrop-filter: saturate(160%) blur(12px);
-            -webkit-backdrop-filter: saturate(160%) blur(12px);
+            background: var(--surface);
             border-bottom: 1px solid transparent;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: border-color 0.2s ease;
         }
-        .site-header.scrolled { border-color: var(--line); box-shadow: 0 4px 20px rgba(31, 42, 55, 0.05); }
+        .site-header.scrolled { border-color: var(--line); }
 
         .header-inner {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
-            min-height: 72px;
+            min-height: 76px;
         }
         .brand { flex: none; }
         .brand img { height: 60px; width: auto; }
@@ -178,56 +160,58 @@
         .primary-nav ul {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.15rem;
             list-style: none;
             padding: 0;
         }
         .primary-nav a {
-            display: block;
-            padding: 0.5rem 0.7rem;
+            display: flex;
+            align-items: center;
+            min-height: var(--tap);
+            padding: 0 0.7rem;
             border-radius: 999px;
             font-size: 0.9rem;
             font-weight: 500;
             text-decoration: none;
-            color: var(--ink-700);
+            color: var(--ink-900);
             white-space: nowrap;
             transition: background-color 0.2s ease, color 0.2s ease;
         }
-        .primary-nav a:hover { background: var(--brand-50); color: var(--brand-700); }
-        .primary-nav a[aria-current="page"] { color: var(--brand-700); }
+        .primary-nav a:hover { background: var(--tomato-50); color: var(--tomato-700); }
+        .primary-nav a[aria-current="page"] { color: var(--tomato-700); }
 
         .header-actions { display: flex; align-items: center; gap: 0.5rem; }
 
+        .account { position: relative; }
         .account-link {
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            padding: 0.45rem 0.8rem;
+            min-height: var(--tap);
+            padding: 0 0.8rem;
             border-radius: 999px;
             font-size: 0.9rem;
             font-weight: 500;
             text-decoration: none;
             white-space: nowrap;
-            color: var(--ink-700);
+            color: var(--ink-900);
             background: none;
             border: 0;
             font-family: inherit;
             cursor: pointer;
         }
-        .account-link:hover { background: var(--brand-50); }
+        .account-link:hover { background: var(--tomato-50); }
         .avatar {
             display: inline-grid;
             place-items: center;
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: var(--brand-600);
-            color: #fff;
+            background: var(--tomato-600);
+            color: var(--on-color);
             font-weight: 600;
             font-size: 0.85rem;
         }
-
-        .account { position: relative; }
         .account-menu {
             position: absolute;
             right: 0;
@@ -237,14 +221,14 @@
             background: var(--surface);
             border: 1px solid var(--line);
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lift);
+            box-shadow: var(--shadow-card);
         }
-        .account-menu[hidden] { display: none; }
-        .account-menu p { padding: 0.5rem 0.75rem; font-size: 0.85rem; color: var(--ink-500); overflow-wrap: anywhere; }
+        .account-menu p { padding: 0.5rem 0.75rem; font-size: 0.85rem; overflow-wrap: anywhere; }
         .account-menu button {
             width: 100%;
+            min-height: var(--tap);
             text-align: left;
-            padding: 0.6rem 0.75rem;
+            padding: 0 0.75rem;
             border: 0;
             background: none;
             border-radius: var(--radius-sm);
@@ -253,12 +237,12 @@
             color: var(--ink-900);
             cursor: pointer;
         }
-        .account-menu button:hover { background: var(--brand-50); }
+        .account-menu button:hover { background: var(--tomato-50); }
 
         .menu-toggle {
             display: none;
-            width: 44px;
-            height: 44px;
+            width: var(--tap);
+            height: var(--tap);
             border-radius: 50%;
             border: 1px solid var(--line);
             background: var(--surface);
@@ -274,14 +258,14 @@
                 left: 0;
                 right: 0;
                 top: 100%;
-                background: var(--cream);
+                background: var(--surface);
                 border-bottom: 1px solid var(--line);
-                box-shadow: 0 16px 30px rgba(31, 42, 55, 0.08);
+                box-shadow: var(--shadow-card);
                 padding: 0.5rem var(--gutter) 1rem;
             }
             .primary-nav[data-open="false"] { display: none; }
             .primary-nav ul { flex-direction: column; align-items: stretch; }
-            .primary-nav a { padding: 0.85rem 0.75rem; font-size: 1rem; border-radius: var(--radius-sm); }
+            .primary-nav a { min-height: 52px; padding: 0 0.75rem; font-size: 1rem; border-radius: var(--radius-sm); }
         }
         @media (max-width: 520px) {
             .header-actions .btn { display: none; }
@@ -289,60 +273,60 @@
             .brand img { height: 52px; }
         }
 
-        /* ---------- Hero ---------- */
-        .hero { padding: clamp(40px, 7vw, 88px) 0 var(--section-y); overflow: hidden; }
+        /* ---------- Hero (tomato band) ---------- */
+        .band-tomato { background: var(--tomato-600); color: var(--on-color); }
+        .band-tomato h1, .band-tomato h2, .band-tomato h3 { color: var(--on-color); }
+
+        .hero { padding: clamp(48px, 7vw, 96px) 0; overflow: hidden; }
         .hero-grid {
             display: grid;
             grid-template-columns: 1.05fr 1fr;
             gap: clamp(40px, 6vw, 72px);
             align-items: center;
         }
-        .hero h1 {
-            font-size: clamp(2.5rem, 6vw, 4.25rem);
-            margin-top: 1rem;
-        }
-        .hero h1 em { font-style: normal; color: var(--brand-600); }
+        .hero h1 { font-size: clamp(2.5rem, 5vw, 3.75rem); max-width: 14em; }
+        .hero h1 span { display: block; color: var(--butter); }
         .hero-lede {
-            margin-top: 1.25rem;
+            margin-top: 1.5rem;
             font-size: clamp(1.05rem, 1.6vw, 1.2rem);
-            color: var(--ink-500);
-            max-width: 34em;
+            max-width: 32em;
         }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
-        .hero-subaction { margin-top: 1.25rem; font-size: 0.95rem; color: var(--ink-500); }
+        .hero-subaction { margin-top: 1rem; font-size: 0.95rem; }
+        .hero-subaction a { color: var(--on-color); font-weight: 600; text-underline-offset: 4px; }
+        .hero-subaction a:hover { color: var(--butter); }
 
         .hero-proof {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.75rem;
+            gap: 1.25rem 2rem;
             margin-top: 2.5rem;
-            padding-top: 1.75rem;
-            border-top: 1px solid var(--line);
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.35);
         }
         .hero-proof strong {
             display: block;
             font-family: var(--font-display);
-            font-size: 1.75rem;
-            color: var(--ink-900);
+            font-weight: 800;
+            font-size: 2rem;
             line-height: 1.1;
+            color: var(--on-color);
         }
-        .hero-proof span { font-size: 0.88rem; color: var(--ink-500); }
+        .hero-proof span { font-size: 0.9rem; }
 
-        /* Photo collage: one tall feature photo plus two stacked photos */
+        /* Photo collage: one tall photo plus two stacked; the container's aspect ratio sizes the grid */
         .hero-media {
             display: grid;
             grid-template-columns: 1.25fr 1fr;
             grid-template-rows: repeat(2, minmax(0, 1fr));
             aspect-ratio: 1.1 / 1;
-            gap: 14px;
-            position: relative;
+            gap: 12px;
         }
         .hero-media figure {
             position: relative;
             border-radius: var(--radius-lg);
             overflow: hidden;
-            background: var(--brand-100);
-            box-shadow: var(--shadow-card);
+            background: var(--tomato-700);
         }
         .hero-media figure:first-child { grid-row: span 2; }
         .hero-media img { width: 100%; height: 100%; object-fit: cover; }
@@ -350,37 +334,19 @@
             position: absolute;
             left: 12px;
             bottom: 12px;
-            padding: 0.35rem 0.75rem;
+            padding: 0.35rem 0.8rem;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.92);
-            color: var(--ink-900);
-            font-size: 0.78rem;
-            font-weight: 500;
-        }
-        .hero-badge {
-            position: absolute;
-            right: -6px;
-            top: -14px;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.9rem;
             background: var(--surface);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lift);
-            font-size: 0.82rem;
-            font-weight: 500;
             color: var(--ink-900);
+            font-size: 0.8rem;
+            font-weight: 500;
         }
-        .hero-badge i { color: var(--leaf-600); font-size: 1.1rem; }
-
         @media (max-width: 900px) {
             .hero-grid { grid-template-columns: 1fr; }
             .hero-media { max-width: 560px; }
         }
 
-        /* ---------- Press & recognition ---------- */
-        .press { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+        /* ---------- Press ---------- */
         .press-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
@@ -392,243 +358,182 @@
             padding: 28px;
             border: 1px solid var(--line);
             border-radius: var(--radius-md);
-            background: var(--cream);
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            transition: border-color 0.2s ease, transform 0.2s ease;
         }
-        .press-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); border-color: var(--brand-100); }
-        .press-logo { align-self: flex-start; height: 56px; width: auto; max-width: 170px; object-fit: contain; margin-bottom: 1.25rem; border-radius: 8px; }
-        .press-card time { font-size: 0.82rem; font-weight: 600; color: var(--brand-600); }
+        .press-card:hover { border-color: var(--tomato-600); transform: translateY(-3px); }
+        .press-logo { align-self: flex-start; height: 56px; width: auto; max-width: 170px; object-fit: contain; border-radius: 8px; margin-bottom: 1.25rem; }
+        .press-card time { font-size: 0.85rem; font-weight: 600; color: var(--tomato-600); }
         .press-card h3 { margin-top: 0.4rem; font-size: 1.1rem; line-height: 1.35; }
-        .press-card p { margin-top: 0.75rem; color: var(--ink-500); font-size: 0.95rem; flex: 1; }
-        .press-card .text-link { margin-top: 1.25rem; }
+        .press-card p { margin-top: 0.75rem; font-size: 0.95rem; flex: 1; }
+        .press-card .text-link { margin-top: 0.75rem; }
 
         .recognition {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
             gap: clamp(24px, 6vw, 72px);
             margin-top: clamp(40px, 6vw, 64px);
+            padding-top: clamp(32px, 4vw, 48px);
+            border-top: 1px solid var(--line);
         }
-        .recognition img { height: clamp(80px, 10vw, 120px); width: auto; object-fit: contain; }
+        .recognition img { height: clamp(80px, 10vw, 110px); width: auto; object-fit: contain; }
 
-        /* ---------- How it works ---------- */
+        /* ---------- How it works: numbered steps, numbers carry the hierarchy ---------- */
+        .band-produce-tint { background: var(--produce-50); }
         .steps {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            counter-reset: step;
+            gap: clamp(24px, 4vw, 48px);
             list-style: none;
             padding: 0;
+            counter-reset: step;
         }
-        .step {
-            position: relative;
-            padding: 32px 28px;
-            background: var(--surface);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-card);
-        }
-        .step-icon {
-            display: grid;
-            place-items: center;
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            background: var(--brand-50);
-            color: var(--brand-600);
-            font-size: 1.25rem;
-            margin-bottom: 1.25rem;
-        }
-        .step::after {
+        .step { padding-top: 1.25rem; border-top: 3px solid var(--produce-800); }
+        .step::before {
             counter-increment: step;
-            content: '0' counter(step);
-            position: absolute;
-            top: 24px;
-            right: 28px;
+            content: counter(step);
+            display: block;
             font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--brand-100);
+            font-weight: 800;
+            font-size: clamp(3rem, 6vw, 4.5rem);
+            line-height: 1;
+            color: var(--tomato-600);
+            margin-bottom: 0.75rem;
         }
-        .step p { margin-top: 0.6rem; color: var(--ink-500); font-size: 0.97rem; }
+        .step p { margin-top: 0.6rem; font-size: 0.97rem; }
         .steps-footer { margin-top: 2rem; }
         @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
 
-        /* ---------- Impact ---------- */
-        .impact { background: var(--ink-900); color: #E8EDF2; }
-        .impact h2, .impact h3 { color: #fff; }
-        .impact .eyebrow { color: #FFB3AA; }
-        .impact .section-head p { color: #B8C2CC; }
+        /* ---------- Impact (produce band) ---------- */
+        .band-produce { background: var(--produce-800); color: var(--produce-200); }
+        .band-produce h2 { color: var(--on-color); }
         .impact-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-md);
-            overflow: hidden;
+            gap: clamp(24px, 4vw, 40px);
+            list-style: none;
+            padding: 0;
         }
-        .impact-stat { padding: clamp(24px, 3vw, 36px); background: var(--ink-900); }
-        .impact-stat i { color: var(--brand-500); font-size: 1.2rem; }
+        .impact-stat { padding-top: 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.3); }
         .impact-stat .num {
             display: block;
-            margin-top: 1rem;
             font-family: var(--font-display);
-            font-size: clamp(2rem, 4vw, 2.9rem);
-            font-weight: 700;
-            color: #fff;
-            line-height: 1.05;
+            font-weight: 800;
+            font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+            line-height: 1;
+            color: var(--on-color);
             font-variant-numeric: tabular-nums;
             white-space: nowrap;
         }
-        .impact-stat .num small { font-family: var(--font-body); font-size: 1rem; font-weight: 500; color: #B8C2CC; }
-        .impact-stat .label { display: block; margin-top: 0.4rem; font-size: 0.92rem; color: #B8C2CC; }
+        .impact-stat .num small { font-family: var(--font-body); font-size: 1rem; font-weight: 500; color: var(--produce-200); }
+        .impact-stat .label { display: block; margin-top: 0.6rem; font-size: 0.95rem; }
         @media (max-width: 900px) { .impact-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 480px) { .impact-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 420px) { .impact-grid { grid-template-columns: 1fr; } }
 
-        /* ---------- Why join ---------- */
+        /* ---------- Why volunteer: icon sits beside its heading ---------- */
         .benefits {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(28px, 4vw, 48px) clamp(32px, 5vw, 64px);
         }
-        .benefit {
-            padding: 28px;
-            border: 1px solid var(--line);
-            border-radius: var(--radius-md);
-            background: var(--surface);
-        }
-        .benefit-icon {
-            display: grid;
-            place-items: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: var(--leaf-50);
-            color: var(--leaf-600);
-            margin-bottom: 1rem;
-        }
-        .benefit p { margin-top: 0.5rem; color: var(--ink-500); font-size: 0.95rem; }
+        .benefit h3 { display: flex; align-items: baseline; gap: 0.6rem; font-size: 1.25rem; }
+        .benefit h3 i { color: var(--produce-600); font-size: 1rem; }
+        .benefit p { margin-top: 0.5rem; }
+        @media (max-width: 700px) { .benefits { grid-template-columns: 1fr; } }
 
         /* ---------- Partners ---------- */
-        .partners { background: var(--surface); border-top: 1px solid var(--line); }
+        .partners { border-top: 1px solid var(--line); }
         .partner-feature {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: clamp(20px, 4vw, 40px);
-            align-items: center;
-            padding: clamp(20px, 3vw, 32px);
-            border-radius: var(--radius-lg);
-            background: var(--leaf-50);
-            margin-bottom: clamp(32px, 5vw, 48px);
-        }
-        .partner-feature img { width: clamp(160px, 22vw, 260px); border-radius: var(--radius-sm); background: #fff; }
-        .partner-feature p { color: var(--ink-500); margin-top: 0.4rem; }
-        @media (max-width: 640px) { .partner-feature { grid-template-columns: 1fr; } }
-
-        .partners-label { font-size: 0.85rem; font-weight: 600; color: var(--ink-500); margin-bottom: 1rem; }
-
-        /* Logo marquee: the list is rendered twice and translated by -50%,
-           so the loop is seamless. Reduced-motion users get a static wrapped grid. */
-        .marquee {
-            overflow: hidden;
-            -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-                    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-        }
-        .marquee-track {
             display: flex;
-            width: max-content;
-            gap: 16px;
-            list-style: none;
-            padding: 8px 0;
-            animation: marquee 45s linear infinite;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: clamp(20px, 4vw, 40px);
+            margin-bottom: clamp(40px, 6vw, 56px);
         }
-        .marquee:hover .marquee-track,
-        .marquee:focus-within .marquee-track { animation-play-state: paused; }
+        .partner-feature img { width: clamp(160px, 22vw, 240px); }
+        .partner-feature div { flex: 1 1 260px; }
+        .partner-feature p { margin-top: 0.4rem; }
+
+        .partners-label { font-weight: 600; color: var(--ink-900); margin-bottom: 1rem; }
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            list-style: none;
+            padding: 0;
+        }
         .logo-tile {
             display: grid;
             place-items: center;
-            width: 170px;
-            height: 104px;
-            padding: 16px;
+            height: 96px;
+            padding: 14px;
             border: 1px solid var(--line);
-            border-radius: var(--radius-md);
-            background: #fff;
+            border-radius: var(--radius-sm);
+            background: var(--surface);
         }
         .logo-tile img { max-height: 100%; max-width: 100%; object-fit: contain; }
-        @keyframes marquee { to { transform: translateX(-50%); } }
+        .partners-footer { display: flex; flex-wrap: wrap; gap: 0 1.5rem; margin-top: 1.5rem; }
 
-        .partners-footer { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem; }
-
-        /* ---------- Final CTA ---------- */
-        .cta-panel {
+        /* ---------- Closing call to action (tomato band) ---------- */
+        .cta-grid {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: clamp(24px, 4vw, 48px);
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(24px, 5vw, 64px);
             align-items: center;
-            padding: clamp(32px, 6vw, 64px);
-            border-radius: var(--radius-lg);
-            background: linear-gradient(135deg, var(--brand-50), #FFF1E6);
-            border: 1px solid var(--brand-100);
         }
-        .cta-panel p { margin-top: 1rem; color: var(--ink-500); font-size: 1.05rem; }
-        .cta-options { display: grid; gap: 12px; }
+        .cta-grid > div > p { margin-top: 1rem; font-size: 1.1rem; }
+        .cta-options { display: grid; gap: 12px; list-style: none; padding: 0; }
         .cta-option {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 18px 20px;
+            min-height: 72px;
+            padding: 16px 20px;
             border-radius: var(--radius-md);
-            background: #fff;
-            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--ink-600);
             text-decoration: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.2s ease;
         }
-        .cta-option:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
-        .cta-option > i:first-child {
-            display: grid;
-            place-items: center;
-            flex: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: var(--brand-50);
-            color: var(--brand-600);
-        }
+        .cta-option:hover { background: var(--butter); transform: translateY(-2px); }
+        .cta-option > i:first-child { flex: none; width: 1.5rem; text-align: center; color: var(--tomato-600); font-size: 1.2rem; }
         .cta-option strong { display: block; color: var(--ink-900); }
-        .cta-option span { font-size: 0.88rem; color: var(--ink-500); }
-        .cta-option .fa-arrow-right { margin-left: auto; color: var(--brand-600); }
-        @media (max-width: 860px) { .cta-panel { grid-template-columns: 1fr; } }
+        .cta-option span { font-size: 0.88rem; }
+        .cta-option .fa-arrow-right { margin-left: auto; color: var(--tomato-600); }
+        @media (max-width: 860px) { .cta-grid { grid-template-columns: 1fr; } }
 
         /* ---------- Footer ---------- */
-        .site-footer { padding: 56px 0 40px; border-top: 1px solid var(--line); }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 1.3fr 1fr 1fr;
-            gap: 32px;
-        }
+        .site-footer { padding: 56px 0 32px; }
+        .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 32px; }
         .footer-grid img { height: 72px; width: auto; }
-        .footer-grid > div > p { margin-top: 1rem; color: var(--ink-500); font-size: 0.93rem; max-width: 30em; }
-        .footer-grid h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-500); margin-bottom: 0.9rem; }
-        .footer-grid ul { list-style: none; padding: 0; display: grid; gap: 0.55rem; }
-        .footer-grid ul a { text-decoration: none; font-size: 0.95rem; overflow-wrap: anywhere; }
-        .footer-grid ul a:hover { color: var(--brand-600); text-decoration: underline; }
-        .footer-grid ul i { width: 1.25rem; color: var(--brand-600); }
-        .footer-bottom { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--ink-500); }
+        .footer-grid > div > p { margin-top: 1rem; font-size: 0.93rem; max-width: 30em; }
+        .footer-grid h3 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .footer-grid ul { list-style: none; padding: 0; }
+        .footer-grid ul a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: var(--tap);
+            text-decoration: none;
+            font-size: 0.95rem;
+            overflow-wrap: anywhere;
+        }
+        .footer-grid ul a:hover { color: var(--tomato-600); text-decoration: underline; }
+        .footer-grid ul i { width: 1.25rem; color: var(--tomato-600); }
+        .footer-bottom { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.85rem; }
         @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr; } }
 
         /* ---------- Reveal-on-scroll (progressive enhancement) ----------
            Content is visible by default; JS adds .js to <html> before hiding anything. */
-        .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
         .js .reveal.is-visible { opacity: 1; transform: none; }
 
+        /* Reduced motion: drop movement (slides, lifts, smooth scroll) but keep
+           color and opacity feedback so hover and focus states still read. */
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
-            *, *::before, *::after { transition: none !important; animation: none !important; }
-            .js .reveal { opacity: 1; transform: none; }
-            .marquee { -webkit-mask-image: none; mask-image: none; }
-            .marquee-track { width: auto; flex-wrap: wrap; justify-content: center; }
-            .marquee-track [aria-hidden="true"] { display: none; }
+            .js .reveal { transform: none; transition: opacity 0.3s ease; }
+            .btn:hover, .press-card:hover, .cta-option:hover, .text-link:hover i { transform: none; }
         }
     </style>
     <script>document.documentElement.classList.add('js');</script>
@@ -680,19 +585,18 @@
 
     <main id="main">
         <!-- Hero -->
-        <section class="hero">
+        <section class="hero band-tomato">
             <div class="container hero-grid">
                 <div>
-                    <span class="eyebrow">Student-led food rescue · New Jersey</span>
-                    <h1>Good food belongs on tables, <em>not in the trash.</em></h1>
-                    <p class="hero-lede">ResQFood volunteers pick up surplus food from local restaurants and bakeries and deliver it to nearby food pantries. Connect, donate, and transform your community with us.</p>
+                    <h1>Good food belongs on tables, <span>not in the trash.</span></h1>
+                    <p class="hero-lede">ResQFood is a student-led food rescue program in New Jersey. Our volunteers pick up surplus food from local restaurants and bakeries and deliver it to nearby food pantries.</p>
                     <div class="hero-actions">
-                        <a class="btn btn-primary" href="mailto:veeragarwal45@gmail.com?subject=Volunteering%20with%20ResQFood">
+                        <a class="btn btn-light" href="mailto:veeragarwal45@gmail.com?subject=Volunteering%20with%20ResQFood">
                             <i class="fas fa-hands-helping" aria-hidden="true"></i> Volunteer with us
                         </a>
-                        <a class="btn btn-secondary" href="how.html">Donate food</a>
+                        <a class="btn btn-outline-light" href="how.html">Donate food</a>
                     </div>
-                    <p class="hero-subaction">Looking for food? <a class="text-link" href="page5.html">Find your nearest pantry <i class="fas fa-arrow-right" aria-hidden="true"></i></a></p>
+                    <p class="hero-subaction">Looking for food? <a href="page5.html">Find your nearest pantry</a>.</p>
 
                     <div class="hero-proof">
                         <div><strong>20,040 lbs</strong><span>of food rescued</span></div>
@@ -712,17 +616,15 @@
                     <figure>
                         <img src="https://i.postimg.cc/qRRHLDQw/IMG-4876.jpg" alt="A volunteer beside a car trunk loaded with bags of rescued food" width="600" height="800" loading="lazy">
                     </figure>
-                    <div class="hero-badge"><i class="fas fa-award" aria-hidden="true"></i> Volunteers earn PVSA hours</div>
                 </div>
             </div>
         </section>
 
         <!-- Press & recognition -->
-        <section class="section press" aria-labelledby="press-title">
+        <section class="section" aria-labelledby="press-title">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">Features &amp; recognition</span>
-                    <h2 id="press-title">As seen in the news</h2>
+                    <h2 id="press-title">In the news</h2>
                 </div>
                 <div class="press-grid">
                     <article class="press-card reveal">
@@ -755,26 +657,22 @@
         </section>
 
         <!-- How it works -->
-        <section class="section" aria-labelledby="how-title">
+        <section class="section band-produce-tint" aria-labelledby="how-title">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">How it works</span>
                     <h2 id="how-title">Surplus food to a nearby pantry in three steps</h2>
                     <p>Restaurants and households can donate either way: request a pickup from our volunteer team, or deliver it yourself with the TableToTable app.</p>
                 </div>
                 <ol class="steps">
                     <li class="step reveal">
-                        <div class="step-icon"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>
                         <h3>Find your nearest pantry</h3>
                         <p>Locate the food pantry closest to you. We work with pantries across the area to make donating easy and accessible.</p>
                     </li>
                     <li class="step reveal">
-                        <div class="step-icon"><i class="fas fa-exchange-alt" aria-hidden="true"></i></div>
                         <h3>Choose how to donate</h3>
                         <p>Request a pickup and the ResQFood team will contact you to schedule a time, or drop off food yourself through the TableToTable app.</p>
                     </li>
                     <li class="step reveal">
-                        <div class="step-icon"><i class="fas fa-heart" aria-hidden="true"></i></div>
                         <h3>Feed your neighbors</h3>
                         <p>Your surplus reaches people facing food insecurity instead of a landfill. Either way, you're a hero.</p>
                     </li>
@@ -786,64 +684,54 @@
         </section>
 
         <!-- Impact -->
-        <section class="section impact" aria-labelledby="impact-title">
+        <section class="section band-produce" aria-labelledby="impact-title">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">Our impact</span>
                     <h2 id="impact-title">Every pickup adds up</h2>
                     <p>Meals are estimated at 1.2 lbs of food per meal.</p>
                 </div>
-                <div class="impact-grid">
-                    <div class="impact-stat">
-                        <i class="fas fa-truck" aria-hidden="true"></i>
+                <ul class="impact-grid">
+                    <li class="impact-stat">
                         <span class="num"><span data-count="383">383</span></span>
                         <span class="label">Food rescues completed</span>
-                    </div>
-                    <div class="impact-stat">
-                        <i class="fas fa-weight-hanging" aria-hidden="true"></i>
+                    </li>
+                    <li class="impact-stat">
                         <span class="num"><span data-count="20040">20,040</span> <small>lbs</small></span>
                         <span class="label">Food rescued</span>
-                    </div>
-                    <div class="impact-stat">
-                        <i class="fas fa-utensils" aria-hidden="true"></i>
+                    </li>
+                    <li class="impact-stat">
                         <span class="num"><span data-count="16700">16,700</span></span>
                         <span class="label">Meals served (est.)</span>
-                    </div>
-                    <div class="impact-stat">
-                        <i class="fas fa-leaf" aria-hidden="true"></i>
+                    </li>
+                    <li class="impact-stat">
                         <span class="num"><span data-count="155100">155,100</span> <small>lbs</small></span>
                         <span class="label">CO₂ reduced</span>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
         </section>
 
-        <!-- Why join -->
+        <!-- Why volunteer -->
         <section class="section" aria-labelledby="why-title">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">Why ResQFood</span>
                     <h2 id="why-title">Why volunteer with us?</h2>
                 </div>
                 <div class="benefits">
                     <div class="benefit reveal">
-                        <div class="benefit-icon"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i></div>
-                        <h3>Make a difference</h3>
+                        <h3><i class="fas fa-hand-holding-heart" aria-hidden="true"></i> Make a difference</h3>
                         <p>In New Jersey, 3 billion lbs of food get thrown away annually and 1 million people face food insecurity.</p>
                     </div>
                     <div class="benefit reveal">
-                        <div class="benefit-icon"><i class="fas fa-seedling" aria-hidden="true"></i></div>
-                        <h3>Protect the environment</h3>
+                        <h3><i class="fas fa-seedling" aria-hidden="true"></i> Protect the environment</h3>
                         <p>Minimize food waste and reduce your carbon footprint by ensuring excess food reaches those who need it most.</p>
                     </div>
                     <div class="benefit reveal">
-                        <div class="benefit-icon"><i class="fas fa-users" aria-hidden="true"></i></div>
-                        <h3>Join a new generation</h3>
+                        <h3><i class="fas fa-users" aria-hidden="true"></i> Join a new generation</h3>
                         <p>Support local food security and connect with like-minded people who want to help their community.</p>
                     </div>
                     <div class="benefit reveal">
-                        <div class="benefit-icon"><i class="fas fa-medal" aria-hidden="true"></i></div>
-                        <h3>Earn PVSA hours</h3>
+                        <h3><i class="fas fa-medal" aria-hidden="true"></i> Earn PVSA hours</h3>
                         <p>Log volunteer hours toward the President's Volunteer Service Award while helping your community.</p>
                     </div>
                 </div>
@@ -854,7 +742,6 @@
         <section class="section partners" aria-labelledby="partners-title">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">Partners</span>
                     <h2 id="partners-title">Partnering with local businesses</h2>
                 </div>
 
@@ -866,23 +753,21 @@
                     </div>
                 </div>
 
-                <p class="partners-label">Our restaurant partners</p>
-                <div class="marquee" role="region" aria-label="Restaurant partner logos">
-                    <ul class="marquee-track">
-                        <li class="logo-tile"><img src="https://i.postimg.cc/6qZJcMYn/Screenshot-2025-01-19-230302.png" alt="Panera Bread" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/PfYR6vdW/PB-LOGOS-removebg-preview.png" alt="Paris Baguette" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/J7k99d5B/86695logo-Badge.png" alt="Bubbakoos Burritos" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/KzLJsChG/i7-UVkwu6-MIr6-removebg-preview.png" alt="Sombrero Tacoria" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/8PTttyKG/7-eleven-thumb.png" alt="7-Eleven" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/8Pww3h96/download.png" alt="Blaze Pizza" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/Ss7c94pM/otmmh3ixr9o5ybigac1b-removebg-preview.png" alt="Bagel Nosh" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/VksLRLzL/Liv-Breads-Logo-500.avif" alt="Liv Breads" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/G2vCRZb5/images-1.png" alt="Seymour's" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/J4SdGy6w/images.jpg" alt="Godfather's" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/Y9fhmmfd/0-0.png" alt="Viva Guacamole" loading="lazy"></li>
-                        <li class="logo-tile"><img src="https://i.postimg.cc/FHdbkDfG/10-13-2018-7-27-36-AM-5141503-t800.jpg" alt="Manhattan Bagel" loading="lazy"></li>
-                    </ul>
-                </div>
+                <p class="partners-label" id="restaurant-partners">Our restaurant partners</p>
+                <ul class="logo-grid" aria-labelledby="restaurant-partners">
+                    <li class="logo-tile"><img src="https://i.postimg.cc/6qZJcMYn/Screenshot-2025-01-19-230302.png" alt="Panera Bread" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/PfYR6vdW/PB-LOGOS-removebg-preview.png" alt="Paris Baguette" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/J7k99d5B/86695logo-Badge.png" alt="Bubbakoos Burritos" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/KzLJsChG/i7-UVkwu6-MIr6-removebg-preview.png" alt="Sombrero Tacoria" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/8PTttyKG/7-eleven-thumb.png" alt="7-Eleven" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/8Pww3h96/download.png" alt="Blaze Pizza" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/Ss7c94pM/otmmh3ixr9o5ybigac1b-removebg-preview.png" alt="Bagel Nosh" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/VksLRLzL/Liv-Breads-Logo-500.avif" alt="Liv Breads" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/G2vCRZb5/images-1.png" alt="Seymour's" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/J4SdGy6w/images.jpg" alt="Godfather's" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/Y9fhmmfd/0-0.png" alt="Viva Guacamole" loading="lazy"></li>
+                    <li class="logo-tile"><img src="https://i.postimg.cc/FHdbkDfG/10-13-2018-7-27-36-AM-5141503-t800.jpg" alt="Manhattan Bagel" loading="lazy"></li>
+                </ul>
 
                 <div class="partners-footer">
                     <a class="text-link" href="partners.html">Meet all our partners <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
@@ -891,33 +776,30 @@
             </div>
         </section>
 
-        <!-- Final CTA -->
-        <section class="section" aria-labelledby="cta-title">
-            <div class="container">
-                <div class="cta-panel reveal">
-                    <div>
-                        <span class="eyebrow">Get involved</span>
-                        <h2 id="cta-title">Ready to make a difference?</h2>
-                        <p>Join ResQFood and be part of the food rescue revolution. Pick the way you want to help.</p>
-                    </div>
-                    <div class="cta-options">
-                        <a class="cta-option" href="mailto:veeragarwal45@gmail.com?subject=Volunteering%20with%20ResQFood">
-                            <i class="fas fa-hands-helping" aria-hidden="true"></i>
-                            <div><strong>Volunteer</strong><span>Help with pickups and deliveries</span></div>
-                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                        </a>
-                        <a class="cta-option" href="mailto:veeragarwal45@gmail.com?subject=Becoming%20a%20ResQFood%20food%20partner">
-                            <i class="fas fa-store" aria-hidden="true"></i>
-                            <div><strong>Become a food partner</strong><span>Restaurants, bakeries, and stores</span></div>
-                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                        </a>
-                        <a class="cta-option" href="how.html">
-                            <i class="fas fa-box-open" aria-hidden="true"></i>
-                            <div><strong>Donate food</strong><span>See how pickups and drop-offs work</span></div>
-                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                        </a>
-                    </div>
+        <!-- Closing call to action -->
+        <section class="section band-tomato" aria-labelledby="cta-title">
+            <div class="container cta-grid">
+                <div class="reveal">
+                    <h2 id="cta-title">Ready to make a difference?</h2>
+                    <p>Join ResQFood and be part of the food rescue revolution. Pick the way you want to help.</p>
                 </div>
+                <ul class="cta-options">
+                    <li><a class="cta-option" href="mailto:veeragarwal45@gmail.com?subject=Volunteering%20with%20ResQFood">
+                        <i class="fas fa-hands-helping" aria-hidden="true"></i>
+                        <div><strong>Volunteer</strong><span>Help with pickups and deliveries</span></div>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </a></li>
+                    <li><a class="cta-option" href="mailto:veeragarwal45@gmail.com?subject=Becoming%20a%20ResQFood%20food%20partner">
+                        <i class="fas fa-store" aria-hidden="true"></i>
+                        <div><strong>Become a food partner</strong><span>Restaurants, bakeries, and stores</span></div>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </a></li>
+                    <li><a class="cta-option" href="how.html">
+                        <i class="fas fa-box-open" aria-hidden="true"></i>
+                        <div><strong>Donate food</strong><span>See how pickups and drop-offs work</span></div>
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </a></li>
+                </ul>
             </div>
         </section>
     </main>
@@ -957,7 +839,7 @@
         (function () {
             var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            // Header shadow once the page scrolls
+            // Header border once the page scrolls
             var header = document.querySelector('.site-header');
             function onScroll() { header.classList.toggle('scrolled', window.scrollY > 8); }
             window.addEventListener('scroll', onScroll, { passive: true });
@@ -1012,16 +894,8 @@
                 if (!accountMenu.hidden) { setMenu(false); accountButton.focus(); }
             });
 
-            // Duplicate marquee logos so the -50% loop is seamless; copies are hidden from screen readers
-            var track = document.querySelector('.marquee-track');
-            Array.prototype.slice.call(track.children).forEach(function (item) {
-                var clone = item.cloneNode(true);
-                clone.setAttribute('aria-hidden', 'true');
-                clone.querySelector('img').alt = '';
-                track.appendChild(clone);
-            });
-
-            // Reveal sections and count up impact numbers when they scroll into view
+            // Reveal sections and count up impact numbers when they scroll into view.
+            // Reduced motion keeps the opacity fade (handled in CSS) but skips the count-up.
             var reveals = document.querySelectorAll('.reveal');
             var counters = document.querySelectorAll('[data-count]');
 
@@ -1038,7 +912,7 @@
                 requestAnimationFrame(step);
             }
 
-            if (reduceMotion || !('IntersectionObserver' in window)) {
+            if (!('IntersectionObserver' in window)) {
                 reveals.forEach(function (el) { el.classList.add('is-visible'); });
                 return;
             }
@@ -1052,6 +926,7 @@
             }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
             reveals.forEach(function (el) { revealObserver.observe(el); });
 
+            if (reduceMotion) return;
             var countObserver = new IntersectionObserver(function (entries) {
                 entries.forEach(function (entry) {
                     if (!entry.isIntersecting) return;
