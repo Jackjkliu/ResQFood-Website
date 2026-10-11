@@ -454,25 +454,77 @@
         .partner-feature div { flex: 1 1 260px; }
         .partner-feature p { margin-top: 0.4rem; }
 
-        .partners-label { font-weight: 600; color: var(--ink-900); margin-bottom: 1rem; }
-        .logo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
+        .partners-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .partners-label { font-weight: 600; color: var(--ink-900); }
+        .marquee-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: var(--tap);
+            padding: 0 1rem;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--ink-900);
+            font: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            flex: none;
+            cursor: pointer;
+        }
+        .marquee-toggle:hover { border-color: var(--tomato-600); color: var(--tomato-700); }
+
+        /* Logo carousel: the list is rendered twice and shifted by -50%, so the loop
+           is seamless. Hover, keyboard focus, or the pause button stop it; with
+           reduced motion it becomes a static wrapped grid. */
+        .marquee {
+            overflow: hidden;
+            padding: 4px 0;
+            -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+                    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+        }
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            gap: 16px;
             list-style: none;
             padding: 0;
+            animation: marquee 50s linear infinite;
         }
+        .marquee:hover .marquee-track,
+        .marquee:focus-within .marquee-track,
+        .marquee.is-paused .marquee-track { animation-play-state: paused; }
+        @keyframes marquee { to { transform: translateX(calc(-50% - 8px)); } }
+
+        /* Fixed-size tiles: the image limits are in px so they always resolve
+           (a % max-height inside an auto-height grid area is ignored, which let logos spill out). */
         .logo-tile {
-            display: grid;
-            place-items: center;
-            height: 96px;
-            padding: 14px;
+            flex: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 168px;
+            height: 104px;
+            padding: 16px;
             border: 1px solid var(--line);
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             background: var(--surface);
         }
-        .logo-tile img { max-height: 100%; max-width: 100%; object-fit: contain; }
-        .partners-footer { display: flex; flex-wrap: wrap; gap: 0 1.5rem; margin-top: 1.5rem; }
+        .logo-tile img { width: auto; height: auto; max-width: 136px; max-height: 72px; object-fit: contain; }
+        .partners-footer { display: flex; flex-wrap: wrap; gap: 0 1.5rem; margin-top: 1.25rem; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .marquee { -webkit-mask-image: none; mask-image: none; }
+            .marquee-track { width: auto; flex-wrap: wrap; animation: none; }
+            .marquee-track [aria-hidden="true"], .marquee-toggle { display: none; }
+        }
 
         /* ---------- Closing call to action (tomato band) ---------- */
         .cta-grid {
@@ -753,8 +805,14 @@
                     </div>
                 </div>
 
-                <p class="partners-label" id="restaurant-partners">Our restaurant partners</p>
-                <ul class="logo-grid" aria-labelledby="restaurant-partners">
+                <div class="partners-bar">
+                    <p class="partners-label" id="restaurant-partners">Our restaurant partners</p>
+                    <button class="marquee-toggle" type="button" aria-controls="partner-logos">
+                        <i class="fas fa-pause" aria-hidden="true"></i><span>Pause logos</span>
+                    </button>
+                </div>
+                <div class="marquee" id="partner-logos">
+                <ul class="marquee-track" aria-labelledby="restaurant-partners">
                     <li class="logo-tile"><img src="https://i.postimg.cc/6qZJcMYn/Screenshot-2025-01-19-230302.png" alt="Panera Bread" loading="lazy"></li>
                     <li class="logo-tile"><img src="https://i.postimg.cc/PfYR6vdW/PB-LOGOS-removebg-preview.png" alt="Paris Baguette" loading="lazy"></li>
                     <li class="logo-tile"><img src="https://i.postimg.cc/J7k99d5B/86695logo-Badge.png" alt="Bubbakoos Burritos" loading="lazy"></li>
@@ -768,6 +826,7 @@
                     <li class="logo-tile"><img src="https://i.postimg.cc/Y9fhmmfd/0-0.png" alt="Viva Guacamole" loading="lazy"></li>
                     <li class="logo-tile"><img src="https://i.postimg.cc/FHdbkDfG/10-13-2018-7-27-36-AM-5141503-t800.jpg" alt="Manhattan Bagel" loading="lazy"></li>
                 </ul>
+                </div>
 
                 <div class="partners-footer">
                     <a class="text-link" href="partners.html">Meet all our partners <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
@@ -892,6 +951,23 @@
                 if (e.key !== 'Escape') return;
                 if (nav.dataset.open === 'true') { setNav(false); toggle.focus(); }
                 if (!accountMenu.hidden) { setMenu(false); accountButton.focus(); }
+            });
+
+            // Partner carousel: duplicate the logos so the -50% loop is seamless
+            // (copies are hidden from screen readers), and wire the pause button.
+            var marquee = document.getElementById('partner-logos');
+            var track = marquee.querySelector('.marquee-track');
+            Array.prototype.slice.call(track.children).forEach(function (item) {
+                var clone = item.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                clone.querySelector('img').alt = '';
+                track.appendChild(clone);
+            });
+            var marqueeToggle = document.querySelector('.marquee-toggle');
+            marqueeToggle.addEventListener('click', function () {
+                var paused = marquee.classList.toggle('is-paused');
+                marqueeToggle.querySelector('i').className = paused ? 'fas fa-play' : 'fas fa-pause';
+                marqueeToggle.querySelector('span').textContent = paused ? 'Play logos' : 'Pause logos';
             });
 
             // Reveal sections and count up impact numbers when they scroll into view.
